@@ -3,7 +3,7 @@ import pygame
 delta = {
     pygame.K_LEFT: (-2, 0),
     pygame.K_RIGHT: (+2, 0),
-    pygame.K_UP: (0, -10),
+    pygame.K_UP: (0, -8.5),
     pygame.K_DOWN: (0, 2),
 }
 
@@ -43,7 +43,8 @@ class Player(pygame.sprite.Sprite):
         if event.type == pygame.KEYDOWN:
             deltax, deltay = delta.get(event.key, (0, 0))
             self.speed[0] += deltax
-            self.speed[1] += deltay
+            if self.coll:
+                self.speed[1] += deltay
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 self.speed[0] = 0
@@ -54,22 +55,26 @@ class Player(pygame.sprite.Sprite):
         self.screen.blit(self.image, self)
 
     def collision(self, list):
+        step = 2
         index = self.rect.collidelist(list)
         if index != -1 and list[index].isSolid:
             itemrect = list[index].rect
-            if (self.rect.clipline((itemrect.topleft[0] + 5, itemrect.topleft[1]),
-                                   (itemrect.topright[0] - 5, itemrect.topright[1])) and not self.coll):  # top
+            if (self.rect.clipline((itemrect.topleft[0] + step, itemrect.topleft[1]),
+                                   (itemrect.topright[0] - step, itemrect.topright[1])) and not self.coll):  # top
                 self.speed[1] = 0
                 self.rect.bottom = itemrect.top + 1
                 self.Egravity = 0
                 self.coll = True
-            elif self.rect.clipline(itemrect.bottomleft, itemrect.bottomright):  # bottom
+            if self.rect.clipline((itemrect.bottomleft[0] + step, itemrect.bottomleft[1]),
+                                   (itemrect.bottomright[0] - step, itemrect.bottomright[1])):  # bottom
                 self.speed[1] = 0
                 self.rect.top = itemrect.bottom
-            elif self.rect.clipline(itemrect.bottomleft, itemrect.topleft) and not self.coll:  # left
+            if self.rect.clipline((itemrect.bottomleft[0], itemrect.bottomleft[1]),
+                                  (itemrect.topleft[0], itemrect.topleft[1] + step)):  # left
                 self.speed[0] = 0
                 self.rect.right = itemrect.left
-            elif self.rect.clipline(itemrect.bottomright, itemrect.topright) and not self.coll:  # right
+            if self.rect.clipline((itemrect.bottomright[0], itemrect.bottomright[1]),
+                                  (itemrect.topright[0], itemrect.topright[1] + step)):  # right
                 self.speed[0] = 0
                 self.rect.left = itemrect.right
         else:
