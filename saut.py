@@ -3,18 +3,18 @@ import sys
 
 pygame.init()
 
-taille_fenetre = (800, 600)
-ecran = pygame.display.set_mode(taille_fenetre)
+wind_size = (800, 600)
+screen = pygame.display.set_mode(wind_size)
 pygame.display.set_caption('saut mdrr ca rebondit')
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
-position_joueur = [400, 500]
-vitesse_saut = -20
-gravite = 1
-en_saut = False
-vitesse_y = 0
+player_pos = [400, 500]
+jump_speed = -20
+gravity = 1
+in_jump = False
+y_speed = 0
 
 running = True
 while running:
@@ -23,21 +23,21 @@ while running:
             running = False
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and not en_saut:
-                en_saut = True
-                vitesse_y = vitesse_saut
+            if event.key == pygame.K_SPACE and not in_jump:
+                in_jump = True
+                y_speed = jump_speed
 
-    if en_saut:
-        position_joueur[1] += vitesse_y
-        vitesse_y += gravite
+    if in_jump:
+        player_pos[1] += y_speed
+        y_speed += gravity
 
-        if position_joueur[1] > 500:
-            position_joueur[1] = 500
-            en_saut = False
-            vitesse_y = 0
+        if player_pos[1] > 500:
+            player_pos[1] = 500
+            in_jump = False
+            y_speed = 0
 
-    ecran.fill(BLACK)
-    pygame.draw.rect(ecran, WHITE, (*position_joueur, 50, 50))
+    screen.fill(BLACK)
+    pygame.draw.rect(screen, WHITE, (*player_pos, 50, 50))
 
     pygame.display.flip()
     pygame.time.Clock().tick(60)
