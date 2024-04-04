@@ -24,6 +24,7 @@ in_jump = False
 y_speed = 0
 score = 0
 score_pos = [25, 25]
+osef_pos = [200, 400]
 
 camera_offset_x = 0
 camera_offset_y = 0
@@ -65,6 +66,8 @@ while running:
     screen.blit(bg, (0, 0))
     pygame.draw.rect(screen, BLACK, [player_pos[0] + camera_offset_x, player_pos[1] + camera_offset_y, 50, 50])
     pygame.draw.rect(screen, GREY, [score_pos[0] + camera_offset_x, score_pos[1] + camera_offset_y, 150, 50], border_radius=10)
+    pygame.draw.rect(screen, GREY, [osef_pos[0] + camera_offset_x, osef_pos[1] + camera_offset_y, 150, 50], border_radius=50)
+
     Show_score()
 
     pygame.display.flip()
