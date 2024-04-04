@@ -4,9 +4,14 @@ import random
 from tools import *
 
 
-class ArcCollider:
+class CircleCollider:
     # TODO: Arc Collider
     def __init__(self, startAngle: int, endAngle: int, radius: float):
+        self.startAngle: int = startAngle
+        self.endAngle: int = endAngle
+        self.radius = radius
+
+    def IsCollidingArc(self, collider):
         pass
 
 
