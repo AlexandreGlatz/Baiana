@@ -21,9 +21,14 @@ y_speed = 0
 score = 0
 score_pos = [25, 25]
 
+camera_offset_x = 0
+camera_offset_y = 0
+
+bg = image.load('photo-montagne-vallee-blanche-chamonix-mont-blanc.jpg')
+
 def Show_score():
     score_display = font.render(str(score), 1, (0, 255, 0))
-    screen.blit(score_display, score_pos)
+    screen.blit(score_display, (score_pos[0] + camera_offset_x, score_pos[1] + camera_offset_y))
 
 running = True
 while running:
@@ -46,9 +51,12 @@ while running:
             in_jump = False
             y_speed = 0
 
-    screen.fill(BLACK)
-    pygame.draw.rect(screen, WHITE, (*player_pos, 50, 50))
-    pygame.draw.rect(screen, GREY, (*score_pos, 150, 50), border_radius=10)
+    camera_offset_x = wind_size[0] // 2 - player_pos[0]
+    camera_offset_y = wind_size[1] // 2 - player_pos[1]
+
+    screen.blit(bg, (0,0))
+    pygame.draw.rect(screen, WHITE, (player_pos[0] + camera_offset_x, player_pos[1] + camera_offset_y, 50, 50))
+    pygame.draw.rect(screen, GREY, (score_pos[0] + camera_offset_x, score_pos[1] + camera_offset_y, 150, 50), border_radius=10)
     Show_score()
 
     pygame.display.flip()
