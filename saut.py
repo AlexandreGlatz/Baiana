@@ -1,6 +1,7 @@
 import pygame
 import sys
 import math
+import pymunk
 
 pygame.init()
 
@@ -31,7 +32,7 @@ on_vine = False
 vine_pos = [600, 200]
 vine_height = 200
 angle = 0
-swing_speed = 0.05
+swing_speed = 0.1
 f_pressed = False
 
 running = True
@@ -69,6 +70,10 @@ while running:
             angle += swing_speed
         player_pos[0] = vine_pos[0] + math.sin(angle) * 100 - 25
         player_pos[1] = vine_pos[1] + (vine_height / 2) + (math.cos(angle) * 100) - 25
+
+    #wall jump activate :
+    #if player_pos[0] > vine_pos[0] + math.sin(angle)*100 - 50 or player_pos[1] > vine_pos[1] + (vine_height / 2) + (math.cos(angle) * 100) - 50 :
+        #on_vine = False
 
     if in_jump and not on_vine:
         player_pos[1] += y_speed
