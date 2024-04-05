@@ -10,9 +10,8 @@ screen.CreateWindow()
 screen.SetBgColor(WHITE)
 
 palette = Palette()
-palette.CreateLists()
-palette.CreatePaletteButtons()
-palette.DisplayPalette(screen, "tiles")
+palette.CreateLists(screen)
+palette.DisplayPalette(screen, palette.objects[3])
 
 while True:
 

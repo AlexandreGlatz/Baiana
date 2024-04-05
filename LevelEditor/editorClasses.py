@@ -1,10 +1,12 @@
 import pygame
+import os
 import glob
 from button import *
 
-BROWN: [int] = (163, 85, 49)
-WHITE: [int] = (255, 255, 255)
-BLACK: [int] = (0, 0, 0)
+BROWN: [int] = (163, 85, 49, 255)
+WHITE: [int] = (255, 255, 255, 255)
+BLACK: [int] = (0, 0, 0, 255)
+TRANSPARENT: [int] = (0, 0, 0, 0)
 
 
 class Screen:
@@ -26,64 +28,41 @@ class Palette:
     def __init__(self):
         self.tileSize = 50
         self.tileScale = (self.tileSize, self.tileSize)
-        self.tiles: [pygame.image] = []
-        self.props: [pygame.image] = []
-        self.backgrounds: [pygame.image] = []
-        self.paletteButtons: [Button] = []
+        self.objects = []
+        self.paletteButtons: [TextButton] = []
 
-    def CreatePaletteButtons(self):
-        tilesButton = Button(WHITE, 1550, 40, 100, 20, 15, "Tiles")
-        propsButton = Button(WHITE, 1550 + 100 + 10, 40, 100, 20, 15, "Props")
-        backgroundsButton = Button(WHITE, 1550 + 210 + 10, 40, 100, 20, 15, "Backgrounds")
-        self.paletteButtons = [tilesButton, propsButton, backgroundsButton]
+    def CreateLists(self, screen):
+        i = 0
+        j = 0
+        x = 1550
+        width = 100
+        for folder in glob.glob('assets/*/'):
+            self.objects.append([])
+            self.paletteButtons.append(TextButton(WHITE, x, 40, width, 20,
+                                                  folder.split("\\")[1], 15,
+                                                  lambda: Palette.DisplayPalette(self, screen, self.objects[i])))
+            for filename in glob.glob(folder + '*.png'):
+                image = pygame.image.load(filename)
+                image = pygame.transform.scale(image, self.tileScale)
+                self.objects[i].append(image)
+                j += 1
+            i += 1
+            x += width + 10
 
-    def CreateLists(self):
-        for filename in glob.glob('assets/tiles/*.png'):
-            image = pygame.image.load(filename)
-            image = pygame.transform.scale(image, self.tileScale)
-            self.tiles.append(image)
-
-        for filename in glob.glob('assets/props/*.png'):
-            image = pygame.image.load(filename)
-            image = pygame.transform.scale(image, self.tileScale)
-            self.props.append(image)
-
-        for filename in glob.glob('assets/backgrounds/*.png'):
-            image = pygame.image.load(filename)
-            image = pygame.transform.scale(image, self.tileScale)
-            self.backgrounds.append(image)
-
-    def DisplayPalette(self, screen: Screen, paletteToDisplay: str):
+    def DisplayPalette(self, screen: Screen, paletteToDisplay):
         backgroundRect = (1520, 0, 400, 1080)
         pygame.draw.rect(screen.window, BROWN, backgroundRect)
         y = 0
         x = 0
         for i in self.paletteButtons:
-            i.DisplayButton(screen.window)
+            i.DisplayButton(screen)
 
-        if paletteToDisplay == "tiles":
-            for i in range(len(self.tiles)):
-                if i % 4 == 0:
-                    y += self.tileSize * 2
-                    x = 0
-                screen.window.blit(self.tiles[i], (25 + 1520 + self.tileSize * 2 * x, y))
-                x += 1
-
-        elif paletteToDisplay == "props":
-            for i in range(len(self.props)):
-                if i % 4 == 0:
-                    y += 100
-                    x = 0
-                screen.window.blit(self.props[i], (25 + 1520 + self.tileSize * 2 * x, y))
-                x += 1
-
-        elif paletteToDisplay == "backgrounds":
-            for i in range(len(self.backgrounds)):
-                if i % 4 == 0:
-                    y += 100
-                    x = 0
-                screen.window.blit(self.backgrounds[i], (25 + 1520 + self.tileSize * 2 * x, y))
-                x += 1
+        for i in range(len(paletteToDisplay)):
+            if i % 4 == 0:
+                y += self.tileSize * 2
+                x = 0
+            screen.window.blit(paletteToDisplay[i], (25 + 1520 + self.tileSize * 2 * x, y))
+            x += 1
 
     def PlaceTile(self, tileIndex, mouseX, mouseY):
         pass
