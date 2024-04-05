@@ -1,5 +1,6 @@
 import pygame
 import sys
+import math
 
 pygame.init()
 
@@ -17,27 +18,21 @@ try:
 except FileNotFoundError:
     font = pygame.font.SysFont(None, 25)
 
+#settings
 player_pos = [400, 500]
+player_speed = 5
 jump_speed = -20
 gravity = 1
 in_jump = False
 y_speed = 0
 score = 0
 score_pos = [25, 25]
-osef_pos = [200, 400]
-
-camera_offset_x = 0
-camera_offset_y = 0
-
-try:
-    bg = pygame.image.load('photo-montagne-vallee-blanche-chamonix-mont-blanc.jpg')
-except FileNotFoundError:
-    bg = pygame.Surface(wind_size)
-    bg.fill(GREY)
-
-def Show_score():
-    score_display = font.render(str(score), True, GREEN)
-    screen.blit(score_display, (score_pos[0] + camera_offset_x, score_pos[1] + camera_offset_y))
+on_vine = False
+vine_pos = [600, 200]
+vine_height = 200
+angle = 0
+swing_speed = 0.05
+f_pressed = False
 
 running = True
 while running:
@@ -45,33 +40,53 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and not in_jump:
-                score += 1
-                in_jump = True
-                y_speed = jump_speed
+    keys = pygame.key.get_pressed()
+    if not on_vine:
+        if keys[pygame.K_q]:
+            player_pos[0] -= player_speed
+        if keys[pygame.K_d]:
+            player_pos[0] += player_speed
+        if keys[pygame.K_SPACE] and not in_jump:
+            y_speed = jump_speed
+            in_jump = True
 
-    if in_jump:
+    if keys[pygame.K_f] and not f_pressed:
+        f_pressed = True
+        if not on_vine and abs(player_pos[0] + 25 - vine_pos[0]) < 10 and player_pos[1] < vine_pos[1] + vine_height and player_pos[1] > vine_pos[1]:
+            on_vine = True
+            in_jump = False
+            y_speed = 0
+        elif on_vine:
+            on_vine = False
+            in_jump = True
+    elif not keys[pygame.K_f]:
+        f_pressed = False
+
+    if on_vine:
+        if keys[pygame.K_q]:
+            angle -= swing_speed
+        if keys[pygame.K_d]:
+            angle += swing_speed
+        player_pos[0] = vine_pos[0] + math.sin(angle) * 100 - 25
+        player_pos[1] = vine_pos[1] + (vine_height / 2) + (math.cos(angle) * 100) - 25
+
+    if in_jump and not on_vine:
         player_pos[1] += y_speed
         y_speed += gravity
-
-        if player_pos[1] > 500:
+        if player_pos[1] >= 500:
             player_pos[1] = 500
             in_jump = False
             y_speed = 0
 
-    camera_offset_x = wind_size[0] // 2 - player_pos[0]
-    camera_offset_y = wind_size[1] // 2 - player_pos[1]
+    screen.fill(BLACK)
 
-    screen.blit(bg, (0, 0))
-    pygame.draw.rect(screen, BLACK, [player_pos[0] + camera_offset_x, player_pos[1] + camera_offset_y, 50, 50])
-    pygame.draw.rect(screen, GREY, [score_pos[0] + camera_offset_x, score_pos[1] + camera_offset_y, 150, 50], border_radius=10)
-    pygame.draw.rect(screen, GREY, [osef_pos[0] + camera_offset_x, osef_pos[1] + camera_offset_y, 150, 50], border_radius=50)
+    pygame.draw.rect(screen, GREEN, (vine_pos[0] - 5, vine_pos[1], 10, vine_height))
+    pygame.draw.rect(screen, WHITE, (*player_pos, 50, 50))
 
-    Show_score()
+    score_text = font.render(f'Score: {score}', True, GREEN)
+    screen.blit(score_text, score_pos)
 
     pygame.display.flip()
     pygame.time.Clock().tick(60)
 
 pygame.quit()
-sys.exit()
