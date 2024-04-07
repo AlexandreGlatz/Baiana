@@ -44,7 +44,6 @@ class Palette:
             for filename in glob.glob(folder + '*.png'):
 
                 image = pygame.image.load(filename)
-                image = pygame.transform.scale(image, self.tileScale)
                 self.objects[i].append(TileButton(tileX, tileY, self.tileSize, self.tileSize, i, j, image))
                 j += 1
                 tileX += self.tileSize * 2
@@ -70,8 +69,8 @@ class Palette:
     def GetTileSize(self):
         return self.tileSize
 
-    def GetDisplayedTileButton(self, currentPaletteIndex):
-        return self.objects[currentPaletteIndex]
+    def GetTileButtonFromCategory(self, category):
+        return self.objects[category]
 
     def DisplayPalette(self, screen: Screen, paletteToDisplay):
         backgroundRect = (1520, 0, 400, 1080)
@@ -90,9 +89,15 @@ class Palette:
         for i in paletteToDisplay:
             i.DisplayTileButton(screen)
 
-    def UnselectButtons(self, currentPaletteIndex):
+    def UnselectButtons(self, currentPaletteIndex, selectedTile, screen):
         for i in self.GetCategoryButtons()[:currentPaletteIndex] + self.GetCategoryButtons()[
-                                                                      currentPaletteIndex + 1:]:
+                                                                   currentPaletteIndex + 1:]:
             self.GetCategoryButtons()[currentPaletteIndex].SetColor(DARKBROWN)
 
+        for tileButton in (self.GetTileButtonFromCategory(currentPaletteIndex)[:selectedTile] +
+                           self.GetTileButtonFromCategory(currentPaletteIndex)[selectedTile + 1:]):
+            tileButton.UnClick(screen)
+
+    def PlaceTile(self, screen, tileButton, mousePos):
+        screen.window.blit(tileButton.image, (mousePos[0], mousePos[1]))
 
