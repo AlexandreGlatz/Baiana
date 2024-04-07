@@ -1,12 +1,11 @@
 import pygame
 import os
 import glob
-from button import *
+from textButton import *
+from TileButton import *
 
-BROWN: [int] = (163, 85, 49, 255)
-WHITE: [int] = (255, 255, 255, 255)
-BLACK: [int] = (0, 0, 0, 255)
-TRANSPARENT: [int] = (0, 0, 0, 0)
+SCREEN_WIDTH: int = 1920
+SCREEN_HEIGHT: int = 1080
 
 
 class Screen:
@@ -29,25 +28,50 @@ class Palette:
         self.tileSize = 50
         self.tileScale = (self.tileSize, self.tileSize)
         self.objects = []
-        self.paletteButtons: [TextButton] = []
+        self.paletteButtons: [] = []
 
     def CreateLists(self, screen):
         i = 0
-        j = 0
-        x = 1550
+        x = 1520
+        y = 0
+        height = 20
         width = 100
         for folder in glob.glob('assets/*/'):
+            j = 0
             self.objects.append([])
-            self.paletteButtons.append(TextButton(WHITE, x, 40, width, 20,
-                                                  folder.split("\\")[1], 15,
-                                                  lambda: Palette.DisplayPalette(self, screen, self.objects[i])))
+            tileX = 1520 + 25
+            tileY = self.tileSize * 2
             for filename in glob.glob(folder + '*.png'):
+
                 image = pygame.image.load(filename)
                 image = pygame.transform.scale(image, self.tileScale)
-                self.objects[i].append(image)
+                self.objects[i].append(TileButton(tileX, tileY, self.tileSize, self.tileSize, i, j, image))
                 j += 1
+                tileX += self.tileSize * 2
+                if j % 4 == 0:
+                    tileY += self.tileSize * 2
+                    tileX = 1520 + 25
+
+            self.paletteButtons.append(TextButton(DARKBROWN, x, y, width, height,
+                                                  folder.split("\\")[1], 15,
+                                                  self, screen, i))
+            if x + width >= SCREEN_WIDTH:
+                x = 0
+                y += height
             i += 1
-            x += width + 10
+            x += width
+
+    def GetObjectList(self):
+        return self.objects
+
+    def GetCategoryButtons(self):
+        return self.paletteButtons
+
+    def GetTileSize(self):
+        return self.tileSize
+
+    def GetDisplayedTileButton(self, currentPaletteIndex):
+        return self.objects[currentPaletteIndex]
 
     def DisplayPalette(self, screen: Screen, paletteToDisplay):
         backgroundRect = (1520, 0, 400, 1080)
@@ -55,14 +79,20 @@ class Palette:
         y = 0
         x = 0
         for i in self.paletteButtons:
-            i.DisplayButton(screen)
+            i.DisplayCategoryButtons(screen)
 
-        for i in range(len(paletteToDisplay)):
+        '''for i in range(len(paletteToDisplay)):
             if i % 4 == 0:
                 y += self.tileSize * 2
                 x = 0
             screen.window.blit(paletteToDisplay[i], (25 + 1520 + self.tileSize * 2 * x, y))
-            x += 1
+            x += 1'''
+        for i in paletteToDisplay:
+            i.DisplayTileButton(screen)
 
-    def PlaceTile(self, tileIndex, mouseX, mouseY):
-        pass
+    def UnselectButtons(self, currentPaletteIndex):
+        for i in self.GetCategoryButtons()[:currentPaletteIndex] + self.GetCategoryButtons()[
+                                                                      currentPaletteIndex + 1:]:
+            self.GetCategoryButtons()[currentPaletteIndex].SetColor(DARKBROWN)
+
+
