@@ -8,8 +8,11 @@ class TileButton(Button):
     def __init__(self, x, y, width, height, paletteIndex,  tileIndex, image, color=TRANSPARENT):
         Button.__init__(self, color, x, y, width, height)
         self.tileIndex = tileIndex
-        self.image = image
-        self.thumbnail = pygame.transform.scale(image, (width, height))
+        self.imageWidth = image.get_width()
+        self.imageHeight = image.get_height()
+        self.baseImage = image
+        self.thumbnail = pygame.transform.scale(self.baseImage, (width, height))
+        self.image = pygame.transform.scale(self.baseImage, (self.imageWidth * 0.2,self.imageHeight * 0.2))
         self.paletteIndex = paletteIndex
 
     def DisplayTileButton(self, screen):

@@ -44,9 +44,9 @@ while True:
 
         if mousePos[0] < 1520 - palette.GetTileSize():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                PlaceTile(screen, palette.GetObjectList()[selectedPalette][selectedTile], mousePos)
+                palette.PlaceTile(screen, selectedPalette, selectedTile, mousePos)
 
     if selectedTile != -1:
         palette.UnselectButtons(currentPaletteIndex, selectedTile, screen)
 
-    pygame.display.update()
+    pygame.display.flip()

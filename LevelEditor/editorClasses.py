@@ -98,6 +98,9 @@ class Palette:
                            self.GetTileButtonFromCategory(currentPaletteIndex)[selectedTile + 1:]):
             tileButton.UnClick(screen)
 
-    def PlaceTile(self, screen, tileButton, mousePos):
-        screen.window.blit(tileButton.image, (mousePos[0], mousePos[1]))
+    def PlaceTile(self, screen, selectedPalette, selectedTile, mousePos):
+        if selectedPalette == 0:
+            screen.window.blit(self.objects[selectedPalette][selectedTile].baseImage, (mousePos[0], mousePos[1]))
+        else:
+            screen.window.blit(self.objects[selectedPalette][selectedTile].image, (mousePos[0], mousePos[1]))
 
