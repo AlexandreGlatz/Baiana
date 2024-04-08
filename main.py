@@ -32,11 +32,12 @@ class Main(object):
             self.listobstable.append(gameobject.object(image_file2, i * image_file2.get_rect().width,
                                                        -image_file2.get_rect().height + 10, True))
         self.listobstable.append(gameobject.object(image_file3, 500, 300, True))
+        self.listobstable.append(gameobject.object(image_file3, 750, 300, False))
         self.listobstable.append(gameobject.object(image_file4, 200, 200, True))
 
     def setup(self):
         self.screen = screen
-        self.player = player.Player(image_file4, 97, 500, gravity)
+        self.player = player.Player(image_file, 97, 500, gravity)
         self.loadmap()
         self.setup_background()
 

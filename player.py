@@ -72,52 +72,56 @@ class Player(gameobject.object):
                 self.speed[1] = 0
 
     def collision(self, list):  # non opti car AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        # it took like 15h to have it work correctly
         indexes = self.rect.collidelistall(list)
         if indexes:
             for i in indexes:
-                vectorTopLeft = [list[i].rect.topleft[0] - self.rect.bottomright[0],
-                                 list[i].rect.topleft[1] - self.rect.bottomright[1]]
-                vectorTopRight = [list[i].rect.topright[0] - self.rect.bottomleft[0],
-                                  list[i].rect.topright[1] - self.rect.bottomleft[1]]
-                vectorBottomRight = [list[i].rect.bottomright[0] - self.rect.topleft[0],
-                                     list[i].rect.bottomright[1] - self.rect.topleft[1]]
-                vectorBottomLeft = [list[i].rect.bottomleft[0] - self.rect.topright[0],
-                                    list[i].rect.bottomleft[1] - self.rect.topright[1]]
-                normTL = sqrt(vectorTopLeft[0]**2 + vectorTopLeft[1]**2)
-                normTR = sqrt(vectorTopRight[0]**2 + vectorTopRight[1]**2)
-                normBR = sqrt(vectorBottomRight[0]**2 + vectorBottomRight[1]**2)
-                normBL = sqrt(vectorBottomLeft[0]**2 + vectorBottomLeft[1]**2)
-                print(normTL, normTR, normBR, normBL)
+                if list[i].isSolid:
+                    vectorTopLeft = [list[i].rect.topleft[0] - self.rect.bottomright[0],
+                                     list[i].rect.topleft[1] - self.rect.bottomright[1]]
+                    vectorTopRight = [list[i].rect.topright[0] - self.rect.bottomleft[0],
+                                      list[i].rect.topright[1] - self.rect.bottomleft[1]]
+                    vectorBottomRight = [list[i].rect.bottomright[0] - self.rect.topleft[0],
+                                         list[i].rect.bottomright[1] - self.rect.topleft[1]]
+                    vectorBottomLeft = [list[i].rect.bottomleft[0] - self.rect.topright[0],
+                                        list[i].rect.bottomleft[1] - self.rect.topright[1]]
+                    normTL = sqrt(vectorTopLeft[0]**2 + vectorTopLeft[1]**2)
+                    normTR = sqrt(vectorTopRight[0]**2 + vectorTopRight[1]**2)
+                    normBR = sqrt(vectorBottomRight[0]**2 + vectorBottomRight[1]**2)
+                    normBL = sqrt(vectorBottomLeft[0]**2 + vectorBottomLeft[1]**2)
 
-                if min(normBL, normBR, normTL, normTR) == normTL:  # closer to topleft
-                    if vectorTopLeft[0] > vectorTopLeft[1]:  # left
-                        self.rect.right = list[i].rect.left
-                    else:  # top
-                        self.rect.bottom = list[i].rect.top
-                        self.Egravity = 0
-                        self.speed[1] = 0
-                        self.jump = True
-                elif min(normBL, normBR, normTL, normTR) == normTR:  # closer to topright
-                    if -vectorTopRight[0] > vectorTopRight[1]:  # right
-                        self.rect.left = list[i].rect.right
-                    else:  # top
-                        self.rect.bottom = list[i].rect.top
-                        self.speed[1] = 0
-                        self.Egravity = 0
-                        self.speed[1] = 0
-                        self.jump = True
-                elif min(normBL, normBR, normTL, normTR) == normBR:  # closer to bottomright
-                    if -vectorBottomRight[0] > -vectorBottomRight[1]:  # right
-                        self.rect.left = list[i].rect.right
-                    else:  # bottom
-                        self.rect.top = list[i].rect.bottom
-                        self.speed[1] = 0
-                else:  # closer to bottomleft
-                    if vectorBottomLeft[0] > -vectorBottomLeft[1]:  # left
-                        self.rect.right = list[i].rect.left
-                    else:  # bottom
-                        self.rect.top = list[i].rect.bottom
-                        self.speed[1] = 0
+                    if min(normBL, normBR, normTL, normTR) == normTL:  # closer to topleft
+                        if vectorTopLeft[0] > vectorTopLeft[1]:  # left
+                            self.rect.right = list[i].rect.left
+                        else:  # top
+                            self.rect.bottom = list[i].rect.top
+                            self.Egravity = 0
+                            self.speed[1] = 0
+                            self.jump = True
+
+                    elif min(normBL, normBR, normTL, normTR) == normTR:  # closer to topright
+                        if -vectorTopRight[0] > vectorTopRight[1]:  # right
+                            self.rect.left = list[i].rect.right
+                        else:  # top
+                            self.rect.bottom = list[i].rect.top
+                            self.speed[1] = 0
+                            self.Egravity = 0
+                            self.speed[1] = 0
+                            self.jump = True
+
+                    elif min(normBL, normBR, normTL, normTR) == normBR:  # closer to bottomright
+                        if -vectorBottomRight[0] > -vectorBottomRight[1]:  # right
+                            self.rect.left = list[i].rect.right
+                        else:  # bottom
+                            self.rect.top = list[i].rect.bottom
+                            self.speed[1] = 0
+
+                    else:  # closer to bottomleft
+                        if vectorBottomLeft[0] > -vectorBottomLeft[1]:  # left
+                            self.rect.right = list[i].rect.left
+                        else:  # bottom
+                            self.rect.top = list[i].rect.bottom
+                            self.speed[1] = 0
 
         else:
             self.collup = False
