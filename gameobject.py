@@ -17,8 +17,8 @@ class object:
 
 
 class shark(object):
-    def __init__(self, x, y, length, speed):
-        self.shark = object.__init__(self, image1, x, y, False)
+    def __init__(self, x, y, length, speed, isSolid):
+        self.shark = object.__init__(self, image1, x, y, isSolid)
         self.facingL = False
         self.startX = x
         self.length = length

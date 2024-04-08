@@ -37,7 +37,7 @@ class Main(object):
         self.listobstable.append(gameobject.object(image_file32, 750, 300, False))
         self.listobstable.append(gameobject.object(image_file4, 200, 200, True))"""
         self.listobstable.append(gameobject.object(image_file_water, 0, self.screen.get_height() - 10, True))
-        self.listobstable.append(gameobject.shark(500,500, 200, 2))
+        self.listobstable.append(gameobject.shark(500, 500, 200, 2, True))
 
     def setup(self):
         self.screen = screen
