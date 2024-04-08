@@ -11,7 +11,6 @@ image_file3 = pygame.image.load("asset/aaa2.png")
 image_file32 = pygame.image.load("asset/aaa.png")
 image_file4 = pygame.image.load("asset/mur.png")
 image_file_water = pygame.image.load("asset/water-export.png")
-
 pygame.init()
 screen = pygame.display.set_mode((screensize[0], screensize[1]), 0, 32)
 
@@ -23,9 +22,15 @@ class Main(object):
         self.player = None
         self.background = None
         self.listobstable = []
-        self.setup()
         self.clock = pygame.time.Clock()
         self.fps = 60
+        self.setup()
+
+    def setup(self):
+        self.screen = screen
+        self.player = player.Player(image_file, 97, 500, gravity)
+        self.loadmap()
+        self.setup_background()
 
     def loadmap(self):
         """for i in range((screensize[0] // image_file2.get_rect().width) + 1):
@@ -37,13 +42,7 @@ class Main(object):
         self.listobstable.append(gameobject.object(image_file32, 750, 300, False))
         self.listobstable.append(gameobject.object(image_file4, 200, 200, True))"""
         self.listobstable.append(gameobject.object(image_file_water, 0, self.screen.get_height() - 10, True))
-        self.listobstable.append(gameobject.shark(500, 500, 200, 2, True))
-
-    def setup(self):
-        self.screen = screen
-        self.player = player.Player(image_file, 97, 500, gravity)
-        self.loadmap()
-        self.setup_background()
+        self.listobstable.append(gameobject.shark(500, 400, 200, 2, True))
 
     def setup_background(self):
         self.background = pygame.Surface(self.screen.get_size())
