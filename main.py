@@ -1,36 +1,43 @@
 import pygame
 import sys
-import os
 import player
 import gameobject
 
-
-gravity = .1
+gravity = 1
 screensize = [1280, 720]
-image_file = os.path.expanduser("asset/Untitled.png")
+image_file = pygame.image.load("asset/Untitled.png")
+image_file2 = pygame.image.load("asset/plat.png")
+image_file3 = pygame.image.load("asset/aaa2.png")
+image_file4 = pygame.image.load("asset/mur.png")
 
 pygame.init()
-pygame.time.Clock.tick(pygame.time.Clock(), 60)
 screen = pygame.display.set_mode((screensize[0], screensize[1]), 0, 32)
 
 
 class Main(object):
     def __init__(self):  # world
+        self.debug = False
         self.screen = None
         self.player = None
         self.background = None
         self.listobstable = []
         self.setup()
+        self.clock = pygame.time.Clock()
+        self.fps = 60
+
+    def loadmap(self):
+        for i in range((screensize[0] // image_file2.get_rect().width) + 1):
+            self.listobstable.append(gameobject.object(image_file2, i * image_file2.get_rect().width,
+                                                       self.screen.get_height() - 10, True))
+            self.listobstable.append(gameobject.object(image_file2, i * image_file2.get_rect().width,
+                                                       -image_file2.get_rect().height + 10, True))
+        self.listobstable.append(gameobject.object(image_file3, 500, 300, True))
+        self.listobstable.append(gameobject.object(image_file3, 700, 300, True))
 
     def setup(self):
         self.screen = screen
-        self.player = player.Player(image_file, 50, 50, gravity)
-        self.listobstable.append(gameobject.object(200, self.screen.get_height()-251, 50, 500, True))
-        self.listobstable.append(gameobject.object(200, self.screen.get_height() - 51, 50, 50, True))
-        self.listobstable.append(gameobject.object(650, self.screen.get_height() - 51, 50, 50, True))
-        self.listobstable.append(gameobject.object(0, self.screen.get_height()-1, 50, self.screen.get_width(), True))
-        self.listobstable.append(gameobject.object(self.screen.get_width()-50, self.screen.get_height()//2, 50, 50,
-                                                   True))
+        self.player = player.Player(image_file, 50, 500, gravity)
+        self.loadmap()
         self.setup_background()
 
     def setup_background(self):
@@ -47,20 +54,36 @@ class Main(object):
             i.draw()
         pygame.display.flip()
 
-    def event_loop(self):
-        player = self.player
+    def event_loop(self, dt):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and not self.debug:
+                self.player.gravity = 0
+                self.player.Egravity = 0
+                self.debug = True
+                print('z')
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.debug:
+                self.player.gravity = gravity
+                self.player.Egravity = gravity
+                self.debug = False
+
+            if not self.debug:
+                self.player.Movement(event, dt)
+            else:
+                self.player.Movementdebug(event)
+
+    def main(self):
+        dt = 0
+        self.clock.tick(self.fps)
         while 1:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                player.Movement(event)
-            player.collision(self.listobstable)
-            player.Update()
+            self.event_loop(dt)
+            self.player.Update(self.listobstable)
             self.draw()
-            pygame.time.delay(3)
+            dt = self.clock.tick(self.fps) / 1000
 
 
 if __name__ == '__main__':
     app = Main()
-    app.event_loop()
+    app.main()
