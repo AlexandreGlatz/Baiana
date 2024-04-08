@@ -11,4 +11,3 @@ class object:
 
     def draw(self):
         self.screen.blit(self.image, self)
-        pygame.draw.rect(self.screen, (255, 0, 0), self.rect, 1)
