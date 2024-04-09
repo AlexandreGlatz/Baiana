@@ -29,8 +29,8 @@ while True:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
 
-            if event.key == pygame.K_LCTRL:
-                palette.SetLockOnGrid(True)
+        if event.key == pygame.K_LCTRL:
+            palette.SetLockOnGrid(True)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LCTRL:
@@ -57,7 +57,7 @@ while True:
         palette.TilePreview(screen, selectedPalette, selectedTile, mousePos)
 
         if mousePos[0] < 1520 - palette.GetTileSize():
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if event.key.getPressed()[0]:
                 palette.PlaceTile(selectedPalette, selectedTile, mousePos)
 
         for i in range(len(palette.GetPlacedTiles())):
