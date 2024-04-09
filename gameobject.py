@@ -23,7 +23,7 @@ class object:
 class shark(object):
     def __init__(self, x, y, toLeft, toRight, speed, isSolid, resize):
         self.imageL = None
-        self.shark = object.__init__(self, image1, x, y, isSolid, resize)
+        self.shark = super().__init__(image1, x, y, isSolid, resize)
         self.startX = x
         self.toleft = toLeft
         self.toright = toRight

@@ -7,8 +7,13 @@ linked to player and gameobject
 
 escape to quit
 space to debug mode
+alt to enable/disable collision
+
+pour load map
+faire
+self.listobstable.append(gameobject.object(x, y, isSolid, resize)
+resize => pourcentage de resize par rapport a la taille de l'image d'origine
 """
-gravity = 1
 image_file = pygame.image.load("asset/basic.png")
 image_file2 = pygame.image.load("asset/plat.png")
 image_file3 = pygame.image.load("asset/aaa2.png")
@@ -22,6 +27,7 @@ screen = pygame.display.set_mode(screensize, 0, 32)
 
 class Main(object):
     def __init__(self):  # world
+        self.gravity = 1
         self.debug = False
         self.screen = None
         self.player = None
@@ -33,7 +39,7 @@ class Main(object):
 
     def setup(self):
         self.screen = screen
-        self.player = player.Player(image_file, 100, 500, gravity, .25)
+        self.player = player.Player(image_file, 100, 500, self.gravity, .25)
         self.loadmap()
         self.setup_background()
 
@@ -77,10 +83,17 @@ class Main(object):
                 self.debug = True
                 print('DEBUG TRUE')
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.debug:
-                self.player.gravity = gravity
-                self.player.Egravity = gravity
+                self.player.gravity = self.gravity
+                self.player.Egravity = self.gravity
                 self.debug = False
                 print("DEBUG FALSE")
+
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_LALT and self.player.isSolid:
+                self.player.isSolid = False
+                print("COLLISION OFF")
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_LALT and not self.player.isSolid:
+                self.player.isSolid = True
+                print("COLLISION ON")
 
             if not self.debug:
                 self.player.Movement(event)

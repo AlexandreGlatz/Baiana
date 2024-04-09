@@ -16,7 +16,7 @@ def clip(val, minval, maxval):
 
 class Player(gameobject.object):
     def __init__(self, image_file, startposX, startpoxY, gravity, resize):
-        self.player = gameobject.object.__init__(self, image_file, startposX, startpoxY, True, resize)
+        self.player = super().__init__(image_file, startposX, startpoxY, True, resize)
         self.speed = [0, 0]
         area = self.screen.get_rect()
         self.width, self.height = area.width, area.height  # screen
@@ -63,8 +63,8 @@ class Player(gameobject.object):
     def Movementdebug(self, event):
         if event.type == pygame.KEYDOWN:
             deltax, deltay = delta.get(event.key, (0, 0))
-            self.speed[0] = deltax // 50
-            self.speed[1] = deltay // 50
+            self.speed[0] = deltax // 100
+            self.speed[1] = deltay // 100
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 self.speed[0] = 0
@@ -74,7 +74,7 @@ class Player(gameobject.object):
     def collision(self, list):  # non opti car AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         # it took like 15h to have it work correctly
         indexes = self.rect.collidelistall(list)
-        if indexes:
+        if indexes and self.isSolid:
             for i in indexes:
                 if list[i].isSolid:
                     vectorTopLeft = [list[i].rect.topleft[0] - self.rect.bottomright[0],
