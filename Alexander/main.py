@@ -2,33 +2,33 @@ import pygame
 import sys
 import math
 from pygame.locals import *
-import classes
+from kayakClasses import *
+from tools import *
 
 
-def DegToRad(angle):
+def KayakLvl():
+    pygame.init()
+    SCREEN_WIDTH: int = 1280
+    SCREEN_HEIGHT: int = 720
+    WHITE: [int] = (255, 255, 255)
+    BLACK: [int] = (0, 0, 0)
 
-    return (angle+90)/57
+    kayakScreen: KayakScreen = KayakScreen(SCREEN_WIDTH, SCREEN_HEIGHT, 10)
+    kayakScreen.CreateWindow()
+    kayakScreen.CreateWavesTable()
 
+    kayakScreen.SetBgColor(WHITE)
+    kayakScreen.DrawWaves(BLACK)
 
-pygame.init()
+    isRunning: bool = True
+    while isRunning:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                isRunning = False
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-WHITE = (0, 0, 0)
+        pygame.display.update()
 
-window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-isRunning = True
-while True:
-    for event in pygame.event.get():
-        if event == pygame.QUIT:
-            pygame.display.quit()
-            pygame.quit()
-            sys.exit()
-
-    pygame.draw.arc(window, WHITE, (50, 50, 50, 50), DegToRad(0), DegToRad(180), 1)
-    pygame.display.update()
-
-
-
+    pygame.quit()
 
 
+KayakLvl()
