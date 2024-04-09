@@ -3,66 +3,44 @@ import sys
 
 pygame.init()
 
-win_width, win_height = 800, 600
-win = pygame.display.set_mode((win_width, win_height))
+# Définition des constantes
+WIDTH, HEIGHT = 500, 500
+player_cube_width, player_cube_height = 60, 60
+bullet_speed, bullet_interval = 5, 30
 
-player_cube_width, player_cube_height = 38, 62
-player_cube_vel = 300
+# Création de la fenêtre
+win = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Cube Tirant")
 
-enemy_cube_width, enemy_cube_height = 60, 60
-enemy_cube_vel = 100
+# Position du carré rouge (ennemi) au centre en haut
+enemy_cube_width = 60
+enemy_cube_height = 60
+enemy_cube_x = (WIDTH - enemy_cube_width) // 2
+enemy_cube_y = 0
 
-# Définir le rectangle de l'ennemi
-enemy_cube = pygame.Rect((win_width - enemy_cube_width) // 2, 20, enemy_cube_width, enemy_cube_height)
+# Position du cube blanc (joueur) initial
+player_cube_x = (WIDTH - player_cube_width) // 2
+player_cube_y = HEIGHT - player_cube_height
 
-bullet_speed = 500
-bullet_interval = 2
+# Vitesse de déplacement du cube blanc
+player_cube_vel = 5
+
+# Initialisation des variables de tir
 bullet_timer = 0
-
 bullet_list = []
 
 clock = pygame.time.Clock()
 FPS = 60
-running = True
-
-spritesheet = pygame.image.load("main_character-Sheet.png")
 
 class Bullet:
     def __init__(self, x, y, vel):
         self.rect = pygame.Rect(x, y, 10, 10)
         self.vel = vel
 
-    def move(self, dt):
-        self.rect.y += self.vel * dt
+    def move(self):
+        self.rect.y += self.vel
 
-print("Chargement du spritesheet:", spritesheet.get_size())  # Vérifier si le spritesheet est correctement chargé
-
-class Player:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.current_frame = 0
-        self.animation_speed = 0.1
-        self.frames = []  
-        self.extract_frames()  
-
-    def extract_frames(self):
-        for i in range(6):  
-            frame = spritesheet.subsurface(pygame.Rect(i * player_cube_width, 0, player_cube_width, player_cube_height))
-            frame = pygame.transform.scale(frame, (player_cube_width, player_cube_height))  
-            self.frames.append(frame)
-
-    def update(self):
-        self.current_frame = (self.current_frame + self.animation_speed) % len(self.frames)
-
-    def draw(self, surface):
-        surface.blit(self.frames[int(self.current_frame)], (self.x, self.y))
-
-
-
-
-# Définir les coordonnées initiales du joueur
-player = Player((win_width - player_cube_width) // 2, win_height - player_cube_height)
+running = True
 
 while running:
     dt = clock.tick(FPS) / 1000
@@ -71,34 +49,42 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    # Déplacement du cube joueur (blanc) avec les touches q et d
     keys = pygame.key.get_pressed()
-    ##### MOUVEMENT ######
-    if keys[pygame.K_LEFT]:
-        player.x -= player_cube_vel * dt
+    if keys[pygame.K_q]:
+        player_cube_x -= player_cube_vel
+    if keys[pygame.K_d]:
+        player_cube_x += player_cube_vel
 
-    if keys[pygame.K_RIGHT]:
-        player.x += player_cube_vel * dt
+    # Limitation du déplacement du cube joueur pour qu'il reste dans la fenêtre
+    if player_cube_x < 0:
+        player_cube_x = 0
+    elif player_cube_x + player_cube_width > WIDTH:
+        player_cube_x = WIDTH - player_cube_width
 
-    player.update()  # Mettre à jour l'animation du joueur
-
-    bullet_timer += dt
+    # Gestion du tir
+    bullet_timer += 1
     if bullet_timer >= bullet_interval:
-        new_bullet = Bullet(enemy_cube.x + enemy_cube_width // 2, enemy_cube.y + enemy_cube_height, bullet_speed)
+        new_bullet = Bullet(enemy_cube_x + enemy_cube_width // 2, enemy_cube_y + enemy_cube_height // 2, bullet_speed)
         bullet_list.append(new_bullet)
         bullet_timer = 0
 
-    win.fill((0, 0, 0))  # Effacer l'écran
-
-    player.draw(win)  # Dessiner le joueur
-
-    pygame.draw.rect(win, (255, 0, 0), enemy_cube)
-
+    # Mise à jour de la position des balles
     for bullet in bullet_list:
-        bullet.move(dt)
-        pygame.draw.rect(win, (0, 255, 0), bullet.rect)
+        bullet.move()
 
-        if bullet.rect.y < 0 or bullet.rect.y > win_height:
+        # Supprimer les balles qui sortent de l'écran
+        if bullet.rect.y > HEIGHT:
             bullet_list.remove(bullet)
+
+    # Effacement de l'écran
+    win.fill((0, 0, 0))
+
+    # Dessin des éléments
+    pygame.draw.rect(win, (255, 255, 255), (player_cube_x, player_cube_y, player_cube_width, player_cube_height)) # Cube joueur (blanc)
+    pygame.draw.rect(win, (255, 0, 0), (enemy_cube_x, enemy_cube_y, enemy_cube_width, enemy_cube_height)) # Cube ennemi (rouge)
+    for bullet in bullet_list:
+        pygame.draw.rect(win, (0, 255, 0), bullet.rect) # Balles (vertes)
 
     pygame.display.update()
 
