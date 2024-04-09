@@ -2,9 +2,13 @@ import pygame
 import sys
 import player
 import gameobject
+"""
+linked to player and gameobject
 
+escape to quit
+space to debug mode
+"""
 gravity = 1
-screensize = [1280, 720]
 image_file = pygame.image.load("asset/Untitled.png")
 image_file2 = pygame.image.load("asset/plat.png")
 image_file3 = pygame.image.load("asset/aaa2.png")
@@ -12,7 +16,8 @@ image_file32 = pygame.image.load("asset/aaa.png")
 image_file4 = pygame.image.load("asset/mur.png")
 image_file_water = pygame.image.load("asset/water-export.png")
 pygame.init()
-screen = pygame.display.set_mode((screensize[0], screensize[1]), 0, 32)
+screensize = pygame.display.set_mode().get_size()  # WindowBorderless
+screen = pygame.display.set_mode(screensize, 0, 32)
 
 
 class Main(object):
@@ -28,7 +33,7 @@ class Main(object):
 
     def setup(self):
         self.screen = screen
-        self.player = player.Player(image_file, 100, 500, gravity, .25)
+        self.player = player.Player(image_file, 100, 500, gravity, .5)
         self.loadmap()
         self.setup_background()
 
@@ -42,7 +47,8 @@ class Main(object):
         self.listobstable.append(gameobject.object(image_file_water,
                                                    self.screen.get_width() - image_file_water.get_rect().width,
                                                    self.screen.get_height() - 10, True, 1))
-        self.listobstable.append(gameobject.shark(900, self.screen.get_height() - 50, 50, 200, 200, True, .2))
+        self.listobstable.append(gameobject.shark(screensize[0] * .8, self.screen.get_height() - 50, 50, 200, 200,
+                                                  True, .2))
         self.listobstable.append(gameobject.object(image_file3, 200, 200, True, 1))
         self.listobstable.append(gameobject.object(image_file32, 400, 200, False, 1))
 
@@ -62,7 +68,7 @@ class Main(object):
 
     def event_loop(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and not self.debug:
