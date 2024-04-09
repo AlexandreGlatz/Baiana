@@ -28,15 +28,6 @@ class Player(gameobject.object):
         self.collright = False
         self.jump = False
 
-    def __str__(self):
-        return (f"Speed: {self.speed} "
-                f"Gravity: {self.Egravity}\n"
-                f"collup: {self.collup}\n"
-                f"colldown: {self.colldown}\n"
-                f"collleft: {self.collleft}\n"
-                f"collright: {self.collright}\n"
-                )
-
     def Update(self, list):
         self.speed[1] += self.Egravity
         self.rect.move_ip(self.speed)

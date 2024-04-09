@@ -56,7 +56,7 @@ class Main(object):
         self.listobstable.append(gameobject.shark(screensize[0] * .8, self.screen.get_height() - 50, 50, 200, 200,
                                                   True, .2))
         self.listobstable.append(gameobject.object(image_file3, 200, 200, True, 1))
-        self.listobstable.append(gameobject.object(image_file32, 400, 200, False, 1))
+        self.listobstable.append(gameobject.object(image_file32, 500, 200, False, 1))
 
     def setup_background(self):
         self.background = pygame.Surface(self.screen.get_size())
