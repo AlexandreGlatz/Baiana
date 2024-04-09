@@ -40,6 +40,8 @@ class Player(gameobject.object):
     def Update(self, list):
         self.speed[1] += self.Egravity
         self.rect.move_ip(self.speed)
+        # to not go outsize of the screen
+        # usefull when no clipping
         self.rect.left = clip(self.rect.left, 0, self.width)
         self.rect.right = clip(self.rect.right, 0, self.width)
         self.rect.top = clip(self.rect.top, 0, self.height)
@@ -63,7 +65,7 @@ class Player(gameobject.object):
     def Movementdebug(self, event):
         if event.type == pygame.KEYDOWN:
             deltax, deltay = delta.get(event.key, (0, 0))
-            self.speed[0] = deltax // 100
+            self.speed[0] = deltax // 250
             self.speed[1] = deltay // 100
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
