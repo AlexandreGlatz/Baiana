@@ -9,6 +9,7 @@ class object:
         self.isSolid = isSolid
         self.resize = resize
         self.image = image_file
+        self.facingL = False
         self.image = pygame.transform.smoothscale_by(self.image, resize)
         self.rect: pygame.Rect = self.image.get_rect()
         self.rect.move_ip(x, y)
@@ -23,7 +24,6 @@ class shark(object):
     def __init__(self, x, y, toLeft, toRight, speed, isSolid, resize):
         self.imageL = None
         self.shark = object.__init__(self, image1, x, y, isSolid, resize)
-        self.facingL = False
         self.startX = x
         self.toleft = toLeft
         self.toright = toRight
@@ -31,15 +31,14 @@ class shark(object):
         self.initimage()
 
     def initimage(self):
-        self.imageL = [pygame.transform.smoothscale_by(image1, self.resize),
-                       pygame.transform.smoothscale_by(image2, self.resize)]
+        self.imageL = pygame.transform.smoothscale_by(image1, self.resize)
 
     def draw(self):
         self.move()
         if self.facingL:
-            self.image = self.imageL[0]
+            self.image = pygame.transform.flip(self.imageL, False, False)
         else:
-            self.image = self.imageL[1]
+            self.image = pygame.transform.flip(self.imageL, True, False)
         self.screen.blit(self.image, self)
 
     def move(self):

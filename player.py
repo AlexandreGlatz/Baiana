@@ -3,10 +3,10 @@ import gameobject
 from math import sqrt
 
 delta = {
-    pygame.K_LEFT: (-500, 0),
-    pygame.K_RIGHT: (+500, 0),
-    pygame.K_UP: (0, -500),
-    pygame.K_DOWN: (0, 500),
+    pygame.K_LEFT: (-2000, 0),
+    pygame.K_RIGHT: (+2000, 0),
+    pygame.K_UP: (0, -1000),
+    pygame.K_DOWN: (0, 1000),
 }
 
 

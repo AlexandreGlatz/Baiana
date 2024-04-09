@@ -9,7 +9,7 @@ escape to quit
 space to debug mode
 """
 gravity = 1
-image_file = pygame.image.load("asset/Untitled.png")
+image_file = pygame.image.load("asset/basic.png")
 image_file2 = pygame.image.load("asset/plat.png")
 image_file3 = pygame.image.load("asset/aaa2.png")
 image_file32 = pygame.image.load("asset/aaa.png")
@@ -33,7 +33,7 @@ class Main(object):
 
     def setup(self):
         self.screen = screen
-        self.player = player.Player(image_file, 100, 500, gravity, .5)
+        self.player = player.Player(image_file, 100, 500, gravity, .25)
         self.loadmap()
         self.setup_background()
 
