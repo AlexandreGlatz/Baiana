@@ -3,32 +3,21 @@ import os
 import glob
 from textButton import *
 from TileButton import *
-
+from screen import *
 SCREEN_WIDTH: int = 1920
 SCREEN_HEIGHT: int = 1080
-
-
-class Screen:
-    def __init__(self, width: int, height: int, windowName: str):
-        self.width: int = width
-        self.height: int = height
-        self.window: pygame.display = None
-        self.windowName: str = windowName
-
-    def CreateWindow(self):
-        self.window = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption(self.windowName)
-
-    def SetBgColor(self, color):
-        self.window.fill(color)
+BROWN: [int] = (163, 85, 49, 255)
 
 
 class Palette:
-    def __init__(self):
+    def __init__(self, baseBg):
         self.tileSize = 50
         self.tileScale = (self.tileSize, self.tileSize)
         self.objects = []
         self.paletteButtons: [] = []
+        self.currentBg = baseBg
+        self.placedTiles = []
+        self.lockOnGrid = False
 
     def CreateLists(self, screen):
         i = 0
@@ -72,6 +61,18 @@ class Palette:
     def GetTileButtonFromCategory(self, category):
         return self.objects[category]
 
+    def GetPaletteButtons(self):
+        return self.paletteButtons
+
+    def GetCurrentBg(self):
+        return self.currentBg
+
+    def GetPlacedTiles(self):
+        return self.placedTiles
+
+    def SetLockOnGrid(self, lock):
+        self.lockOnGrid = lock
+
     def DisplayPalette(self, screen: Screen, paletteToDisplay):
         backgroundRect = (1520, 0, 400, 1080)
         pygame.draw.rect(screen.window, BROWN, backgroundRect)
@@ -98,9 +99,32 @@ class Palette:
                            self.GetTileButtonFromCategory(currentPaletteIndex)[selectedTile + 1:]):
             tileButton.UnClick(screen)
 
-    def PlaceTile(self, screen, selectedPalette, selectedTile, mousePos):
-        if selectedPalette == 0:
-            screen.window.blit(self.objects[selectedPalette][selectedTile].baseImage, (mousePos[0], mousePos[1]))
+    def PlaceTile(self, selectedPalette, selectedTile, mousePos):
+        size = self.objects[selectedPalette][selectedTile].GetImageWidth()
+        if self.lockOnGrid:
+            posX = (mousePos[0] // size) * size
+            posY = (mousePos[1] // size) * size
         else:
-            screen.window.blit(self.objects[selectedPalette][selectedTile].image, (mousePos[0], mousePos[1]))
+            posX = mousePos[0]
+            posY = mousePos[1]
+
+        if selectedPalette == 0:
+            self.currentBg = self.objects[selectedPalette][selectedTile].baseImage
+        else:
+            self.placedTiles.append([self.objects[selectedPalette][selectedTile].image, (posX, posY)])
+
+    def TilePreview(self, screen, selectedPalette, selectedTile, mousePos):
+        size = self.objects[selectedPalette][selectedTile].GetImageWidth()
+        if self.lockOnGrid:
+            posX = (mousePos[0] // size) * size
+            posY = (mousePos[1] // size) * size
+        else:
+            posX = mousePos[0]
+            posY = mousePos[1]
+
+        if not selectedPalette == 0 and mousePos[0] < 1520:
+            screen.window.blit(self.objects[selectedPalette][selectedTile].image, (posX, posY))
+
+    def UpdateCurrentBg(self, screen):
+        screen.window.blit(self.currentBg, (0, 0))
 

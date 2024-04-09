@@ -5,7 +5,7 @@ from button import *
 
 class TileButton(Button):
 
-    def __init__(self, x, y, width, height, paletteIndex,  tileIndex, image, color=TRANSPARENT):
+    def __init__(self, x, y, width, height, paletteIndex, tileIndex, image, color=(0, 0, 0, 0)):
         Button.__init__(self, color, x, y, width, height)
         self.tileIndex = tileIndex
         self.imageWidth = image.get_width()
@@ -25,8 +25,11 @@ class TileButton(Button):
     def GetTile(self):
         return self.tileIndex
 
+    def GetImageWidth(self):
+        return self.imageWidth * 0.2
+
     def OnClick(self, screen):
-        pygame.draw.rect(screen.window, BLACK, (self.x - 5, self.y - 5, self.width + 10, self.height + 10), 1)
+        pygame.draw.rect(screen.window, (0, 0, 0, 255), (self.x - 5, self.y - 5, self.width + 10, self.height + 10), 1)
         screen.window.blit(self.thumbnail, (self.x, self.y))
 
     def UnClick(self, screen):

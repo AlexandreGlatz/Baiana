@@ -10,13 +10,15 @@ screen = Screen(SCREEN_WIDTH, SCREEN_HEIGHT, "Level Editor")
 screen.CreateWindow()
 screen.SetBgColor(WHITE)
 
-palette = Palette()
+
+palette = Palette(pygame.image.load("assets/backgrounds/bleu-ciel-540-ceradel-sans-plomb-20-grammes.png"))
 palette.CreateLists(screen)
 palette.DisplayPalette(screen, palette.GetObjectList()[0])
 palette.GetCategoryButtons()[0].SetColor(BROWN)
 currentPaletteIndex = 0
 selectedPalette = 0
 selectedTile = -1
+
 while True:
 
     for event in pygame.event.get():
@@ -26,6 +28,13 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
+
+            if event.key == pygame.K_LCTRL:
+                palette.SetLockOnGrid(True)
+
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LCTRL:
+                palette.SetLockOnGrid(False)
 
         mousePos = pygame.mouse.get_pos()
 
@@ -42,11 +51,15 @@ while True:
                     selectedTile = tileButtons.GetTile()
                     tileButtons.OnClick(screen)
 
+        palette.UpdateCurrentBg(screen)
+        palette.DisplayPalette(screen, palette.GetObjectList()[currentPaletteIndex])
+        palette.UnselectButtons(currentPaletteIndex, selectedTile, screen)
+        palette.TilePreview(screen, selectedPalette, selectedTile, mousePos)
+
         if mousePos[0] < 1520 - palette.GetTileSize():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                palette.PlaceTile(screen, selectedPalette, selectedTile, mousePos)
+                palette.PlaceTile(selectedPalette, selectedTile, mousePos)
 
-    if selectedTile != -1:
-        palette.UnselectButtons(currentPaletteIndex, selectedTile, screen)
-
+        for i in range(len(palette.GetPlacedTiles())):
+            screen.window.blit(palette.GetPlacedTiles()[i][0], palette.GetPlacedTiles()[i][1])
     pygame.display.flip()
