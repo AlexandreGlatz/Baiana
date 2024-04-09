@@ -28,21 +28,23 @@ class Main(object):
 
     def setup(self):
         self.screen = screen
-        self.player = player.Player(image_file, 97, 500, gravity)
+        self.player = player.Player(image_file, 100, 500, gravity, .25)
         self.loadmap()
         self.setup_background()
 
     def loadmap(self):
-        """for i in range((screensize[0] // image_file2.get_rect().width) + 1):
+        for i in range((screensize[0] // image_file2.get_rect().width) + 1):
             self.listobstable.append(gameobject.object(image_file2, i * image_file2.get_rect().width,
-                                                       self.screen.get_height() - 10, True))
+                                                       self.screen.get_height() - 10, True, 1))
             self.listobstable.append(gameobject.object(image_file2, i * image_file2.get_rect().width,
-                                                       -image_file2.get_rect().height + 10, True))
-        self.listobstable.append(gameobject.object(image_file3, 500, 300, True))
-        self.listobstable.append(gameobject.object(image_file32, 750, 300, False))
-        self.listobstable.append(gameobject.object(image_file4, 200, 200, True))"""
-        self.listobstable.append(gameobject.object(image_file_water, 0, self.screen.get_height() - 10, True))
-        self.listobstable.append(gameobject.shark(500, 400, 200, 2, True))
+                                                       -image_file2.get_rect().height + 10, True, 1))
+
+        self.listobstable.append(gameobject.object(image_file_water,
+                                                   self.screen.get_width() - image_file_water.get_rect().width,
+                                                   self.screen.get_height() - 10, True, 1))
+        self.listobstable.append(gameobject.shark(900, self.screen.get_height() - 50, 50, 200, 200, True, .2))
+        self.listobstable.append(gameobject.object(image_file3, 200, 200, True, 1))
+        self.listobstable.append(gameobject.object(image_file32, 400, 200, False, 1))
 
     def setup_background(self):
         self.background = pygame.Surface(self.screen.get_size())
@@ -58,7 +60,7 @@ class Main(object):
             i.draw()
         pygame.display.flip()
 
-    def event_loop(self, dt):
+    def event_loop(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -75,17 +77,27 @@ class Main(object):
                 print("DEBUG FALSE")
 
             if not self.debug:
-                self.player.Movement(event, dt)
+                self.player.Movement(event)
             else:
                 self.player.Movementdebug(event)
 
+    def givedt(self, dt):
+        self.player.dt = dt
+        for i in self.listobstable:
+            try:
+                if i.__getattribute__("speed"):
+                    i.dt = dt
+            except AttributeError:
+                pass
+
     def main(self):
-        dt = 0
+        dt = 1
         self.clock.tick(self.fps)
         while 1:
-            self.event_loop(dt)
+            self.event_loop()
             self.player.Update(self.listobstable)
             self.draw()
+            self.givedt(dt)
             dt = self.clock.tick(self.fps) / 1000
 
 
