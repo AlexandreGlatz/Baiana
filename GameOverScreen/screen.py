@@ -14,3 +14,6 @@ class Screen:
 
     def SetBgColor(self, color):
         self.window.fill(color)
+
+    def SetBgImage(self, img):
+        self.window.blit(img, (0, 0))
