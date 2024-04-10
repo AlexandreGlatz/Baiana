@@ -14,7 +14,7 @@ class object:
         self.rect: pygame.Rect = self.image.get_rect()
         self.rect.move_ip(x, y)
         self.screen = pygame.display.get_surface()
-        self.dt = 1
+        self.dt = 0
 
     def draw(self):
         self.screen.blit(self.image, self)

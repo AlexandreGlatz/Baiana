@@ -33,7 +33,6 @@ class Main(object):
         self.player = None
         self.background = None
         self.listobstable = []
-        self.clock = pygame.time.Clock()
         self.fps = 60
         self.setup()
 
@@ -53,7 +52,7 @@ class Main(object):
         self.listobstable.append(gameobject.object(image_file_water,
                                                    self.screen.get_width() - image_file_water.get_rect().width,
                                                    self.screen.get_height() - 10, True, 1))
-        self.listobstable.append(gameobject.shark(screensize[0] * .8, self.screen.get_height() - 50, 50, 200, 200,
+        self.listobstable.append(gameobject.shark(screensize[0] * .8, self.screen.get_height() - 60, 50, 200, 200,
                                                   True, .2))
         self.listobstable.append(gameobject.object(image_file3, 200, 200, True, 1))
         self.listobstable.append(gameobject.object(image_file32, 500, 200, False, 1))
@@ -110,14 +109,19 @@ class Main(object):
                 pass
 
     def main(self):
-        dt = 1
-        self.clock.tick(self.fps)
+        dttraget = 1000 / self.fps
         while 1:
+            start = pygame.time.get_ticks()
             self.event_loop()
             self.player.Update(self.listobstable)
             self.draw()
+            end = pygame.time.get_ticks()
+            dt = end - start
+            if dt < dttraget:
+                pygame.time.wait(int(dttraget - dt))
+                dt = dttraget
+            dt /= 1000
             self.givedt(dt)
-            dt = self.clock.tick(self.fps) / 1000
 
 
 if __name__ == '__main__':

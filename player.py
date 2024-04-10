@@ -5,8 +5,8 @@ from math import sqrt
 delta = {
     pygame.K_LEFT: (-2000, 0),
     pygame.K_RIGHT: (+2000, 0),
-    pygame.K_UP: (0, -1000),
-    pygame.K_DOWN: (0, 1000),
+    pygame.K_UP: (0, -5000),
+    pygame.K_DOWN: (0, 5000),
 }
 
 
@@ -21,11 +21,7 @@ class Player(gameobject.object):
         area = self.screen.get_rect()
         self.width, self.height = area.width, area.height  # screen
         self.gravity = gravity  # world gravity
-        self.Egravity = gravity  # current gravity
-        self.colldown = False
-        self.collup = False
-        self.collleft = False
-        self.collright = False
+        self.Egravity = gravity # current gravity
         self.jump = False
 
     def Update(self, list):
@@ -44,7 +40,7 @@ class Player(gameobject.object):
             deltax, deltay = delta.get(event.key, (0, 0))
             self.speed[0] += deltax * self.dt * self.resize
             if self.jump:
-                self.speed[1] = deltay * 5 * self.dt * self.resize
+                self.speed[1] = deltay * self.dt * self.resize
                 self.jump = False
                 self.Egravity = self.gravity
         elif event.type == pygame.KEYUP:
@@ -57,7 +53,7 @@ class Player(gameobject.object):
         if event.type == pygame.KEYDOWN:
             deltax, deltay = delta.get(event.key, (0, 0))
             self.speed[0] = deltax // 250
-            self.speed[1] = deltay // 100
+            self.speed[1] = deltay // 500
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 self.speed[0] = 0
@@ -117,8 +113,4 @@ class Player(gameobject.object):
                             self.speed[1] = 0
 
         else:
-            self.collup = False
-            self.collright = False
-            self.collleft = False
-            self.colldown = False
             self.Egravity = self.gravity
