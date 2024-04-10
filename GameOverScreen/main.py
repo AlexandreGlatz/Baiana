@@ -3,53 +3,53 @@ from screen import *
 from imageButton import *
 from tools import *
 
-SCREEN_WIDTH = 1920
-SCREEN_HEIGHT = 1080
 
-WHITE = (255, 255, 255, 255)
-screen = Screen(SCREEN_WIDTH, SCREEN_HEIGHT, "Level Editor")
-screen.CreateWindow()
-screen.SetBgColor(WHITE)
+def GameOver():
+    SCREEN_WIDTH = 1920
+    SCREEN_HEIGHT = 1080
 
-imgReturn = pygame.image.load('assets/plainTxt/return.png')
-imgReturnHover = pygame.image.load('assets/hoverTxt/returnHover.png')
+    WHITE = (255, 255, 255, 255)
+    screen = Screen(SCREEN_WIDTH, SCREEN_HEIGHT, "Level Editor")
+    screen.CreateWindow()
+    screen.SetBgColor(WHITE)
 
-imgQuit = pygame.image.load('assets/plainTxt/mainMenu.png')
-imgQuitHover = pygame.image.load('assets/hoverTxt/mainMenuHover.png')
-buttons = [ImageButton(CenterX(imgReturn.get_width(), SCREEN_WIDTH),
-                       550, imgReturn.get_width(), imgReturn.get_height(), imgReturn, imgReturnHover, print("a")),
-           ImageButton(CenterX(imgQuit.get_width(), SCREEN_WIDTH),
-                       700, imgQuit.get_width(), imgQuit.get_height(), imgQuit, imgQuitHover, print('b'))]
+    imgReturn = pygame.image.load('assets/plainTxt/return.png')
+    imgReturnHover = pygame.image.load('assets/hoverTxt/returnHover.png')
 
-imgTitle = pygame.image.load('assets/plainTxt/gameOver.png')
+    imgQuit = pygame.image.load('assets/plainTxt/mainMenu.png')
+    imgQuitHover = pygame.image.load('assets/hoverTxt/mainMenuHover.png')
+    buttons = [ImageButton(750, 550, imgReturn.get_width(), imgReturn.get_height(), imgReturn, imgReturnHover, print("a")),
+               ImageButton(750, 700, imgQuit.get_width(), imgQuit.get_height(), imgQuit, imgQuitHover, print('b'))]
 
-bgImg = pygame.image.load('assets/menu.png')
-menuBg = pygame.image.load('assets/bgTextured.png')
-while True:
-    mousePos = pygame.mouse.get_pos()
+    imgTitle = pygame.image.load('assets/plainTxt/gameOver.png')
 
-    screen.SetBgImage(bgImg)
-    screen.window.blit(menuBg, (CenterX(menuBg.get_width(), SCREEN_WIDTH), 100))
-    screen.window.blit(imgTitle, (CenterX(imgTitle.get_width(), SCREEN_WIDTH), 240))
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
+    bgImg = pygame.image.load('assets/menu.png')
+    menuBg = pygame.image.load('assets/bgTextured.png')
+    while True:
+        mousePos = pygame.mouse.get_pos()
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+        screen.SetBgImage(bgImg)
+        screen.window.blit(menuBg, (CenterX(menuBg.get_width(), SCREEN_WIDTH), 100))
+        screen.window.blit(imgTitle, (CenterX(imgTitle.get_width(), SCREEN_WIDTH), 240))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 pygame.quit()
 
-    for i in buttons:
-        i.DisplayButton(screen)
-        if i.IsHover(mousePos):
-            i.SetDisplayedImage(1)
-            for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    i.Click()
-        else:
-            i.SetDisplayedImage(0)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
 
-    pygame.display.update()
+        for i in buttons:
+            i.DisplayButton(screen)
+            if i.IsHover(mousePos):
+                i.SetDisplayedImage(1)
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                        i.Click()
+            else:
+                i.SetDisplayedImage(0)
+
+        pygame.display.update()
 
 
 
