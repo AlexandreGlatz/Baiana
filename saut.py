@@ -3,6 +3,11 @@ import sys
 import math
 
 pygame.init()
+pygame.mixer.init()
+
+#Music
+pygame.mixer.music.load('Gerudo Valley - The Legend of Zelda Ocarina Of Time.mp3')
+pygame.mixer.music.play(-1)
 
 # Window settings
 wind_size = (800, 600)
