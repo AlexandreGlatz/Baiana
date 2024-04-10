@@ -1,6 +1,6 @@
 import pygame
 import sys
-import player
+import playerani
 import gameobject
 """
 linked to player and gameobject
@@ -39,7 +39,7 @@ class Main(object):
 
     def setup(self):
         self.screen = screen
-        self.player = player.Player(image_file, 100, 500, self.gravity, .25)
+        self.player = playerani.Player(image_file, 100, 500, self.gravity, .25)
         self.loadmap()
         self.setup_background()
 
@@ -70,6 +70,8 @@ class Main(object):
         self.player.draw()
         for i in self.listobstable:
             i.draw()
+        if self.debug:
+            pygame.draw.rect(self.screen, (255, 0, 0), self.player.rect, 1)
         pygame.display.flip()
 
     def event_loop(self):
@@ -114,7 +116,7 @@ class Main(object):
         while 1:
             start = pygame.time.get_ticks()
             self.event_loop()
-            self.player.Update(self.listobstable)
+            self.player.Update(self.listobstable, self.fps)
             self.draw()
             end = pygame.time.get_ticks()
             dt = end - start
