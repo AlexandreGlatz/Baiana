@@ -2,6 +2,8 @@ import pygame
 import sys
 import playerani
 import gameobject
+import Camera
+
 """
 linked to player and gameobject
 
@@ -35,11 +37,13 @@ class Main(object):
         self.listobstable = []
         self.clock = pygame.time.Clock()
         self.fps = 60
+        self.camera = None
         self.setup()
 
     def setup(self):
         self.screen = screen
         self.player = playerani.Player(image_file, 100, 500, self.gravity, .25)
+        self.camera = Camera.Camera(self.player, self.screen.get_width(), self.screen.get_height())
         self.loadmap()
         self.setup_background()
 
@@ -67,11 +71,11 @@ class Main(object):
 
     def draw(self):
         self.screen.blit(self.background, (0, 0))
-        self.player.draw()
+        # self.player.draw()
+        self.screen.blit(self.player.image, self.camera.apply(self.player.rect))
         for i in self.listobstable:
-            i.draw()
-        if self.debug:
-            pygame.draw.rect(self.screen, (255, 0, 0), self.player.rect, 1)
+            # i.draw()
+            self.screen.blit(i.image, self.camera.apply(i.rect))
         pygame.display.flip()
 
     def event_loop(self):
@@ -111,12 +115,19 @@ class Main(object):
             except AttributeError:
                 pass
 
+    def Update(self):
+        self.player.Update(self.listobstable, self.fps)
+        for i in self.listobstable:
+            if i.__class__.__name__ == "shark":
+                i.move()
+
     def main(self):
         dttraget = 1000 / self.fps
         while 1:
             start = pygame.time.get_ticks()
             self.event_loop()
-            self.player.Update(self.listobstable, self.fps)
+            self.Update()
+            self.camera.update()
             self.draw()
             end = pygame.time.get_ticks()
             dt = end - start

@@ -34,11 +34,6 @@ class shark(object):
         self.imageL = pygame.transform.smoothscale_by(image1, self.resize)
 
     def draw(self):
-        self.move()
-        if self.facingL:
-            self.image = pygame.transform.flip(self.imageL, False, False)
-        else:
-            self.image = pygame.transform.flip(self.imageL, True, False)
         self.screen.blit(self.image, self)
 
     def move(self):
@@ -49,5 +44,7 @@ class shark(object):
 
         if self.facingL:
             self.rect.move_ip(-self.speed * self.dt, 0)
+            self.image = pygame.transform.flip(self.imageL, False, False)
         else:
             self.rect.move_ip(self.speed * self.dt, 0)
+            self.image = pygame.transform.flip(self.imageL, True, False)

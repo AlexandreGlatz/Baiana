@@ -24,6 +24,7 @@ class Player(gameobject.object):
         self.Egravity = gravity  # current gravity
         self.jump = False
 
+        # run
         sprite_sheet = pygame.image.load("asset/run_sheet.png").convert_alpha()
         frame_width = sprite_sheet.get_width() / 6
         frame_height = sprite_sheet.get_height()
@@ -34,19 +35,32 @@ class Player(gameobject.object):
 
         self.running_frames_scaled = [pygame.transform.scale(frame, (scaled_frame_width, scaled_frame_height)) for
                                       frame in running_frames]
-        self.currentframe = 0
+        self.currentframeRun = 0
         self.last_update = 0
         self.idle = pygame.transform.smoothscale_by(image_file, resize)
+
+        # jump
+        jump_sheet = pygame.image.load("asset/jump-Sheet.png").convert_alpha()
+        frame_j_width = jump_sheet.get_width() / 6
+        frame_j_height = jump_sheet.get_height()
+        jumping_frames = [jump_sheet.subsurface(pygame.Rect(i * frame_j_width, 0, frame_j_width, frame_j_height)) for i
+                          in range(5)]
+
+        scaled_frame_j_width = int(frame_j_width * resize)
+        scaled_frame_j_height = int(frame_j_height * resize)
+        self.jumping_frames_scaled = [pygame.transform.scale(frame, (scaled_frame_j_width, scaled_frame_j_height)) for
+                                      frame in jumping_frames]
+        self.currentframeJump = 0
 
     def Update(self, list, fps):
         self.speed[1] += self.Egravity
         self.rect.move_ip(self.speed)
         # to not go outsize of the screen
         # usefull when no clipping
-        self.rect.left = clip(self.rect.left, 0, self.width)
+        """self.rect.left = clip(self.rect.left, 0, self.width)
         self.rect.right = clip(self.rect.right, 0, self.width)
         self.rect.top = clip(self.rect.top, 0, self.height)
-        self.rect.bottom = clip(self.rect.bottom, 0, self.height)
+        self.rect.bottom = clip(self.rect.bottom, 0, self.height)"""
         self.collision(list)
 
         if self.speed[0] > 0:
@@ -58,12 +72,18 @@ class Player(gameobject.object):
         if self.jump and self.speed[0] != 0:  # not jumping
             if current_time - self.last_update > fps:
                 self.last_update = current_time
-                self.currentframe = (self.currentframe + 1) % len(self.running_frames_scaled)
-                self.image = self.running_frames_scaled[self.currentframe]
+                self.currentframeRun = (self.currentframeRun + 1) % len(self.running_frames_scaled)
+                self.image = self.running_frames_scaled[self.currentframeRun]
                 if self.facingL:
                     self.image = pygame.transform.flip(self.image, True, False)
         elif self.jump and self.speed[0] == 0:  # not moving
             self.image = self.idle
+        elif not self.jump and self.speed[0] != 0:  # jumping and moveing
+            self.last_update = current_time
+            self.currentframeJump = (self.currentframeJump + 1) % len(self.jumping_frames_scaled)
+            self.image = self.jumping_frames_scaled[self.currentframeJump]
+            if self.facingL:
+                self.image = pygame.transform.flip(self.image, True, False)
 
     def Movement(self, event):
         if event.type == pygame.KEYDOWN:
