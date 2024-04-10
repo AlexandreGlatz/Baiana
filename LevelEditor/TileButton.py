@@ -5,16 +5,16 @@ from button import *
 
 class TileButton(Button):
 
-    def __init__(self, x, y, width, height, paletteIndex, tileIndex, image, color=(0, 0, 0, 0)):
+    def __init__(self, x, y, width, height, paletteIndex, tileIndex, image, imageFile, color=(0, 0, 0, 0)):
         Button.__init__(self, color, x, y, width, height)
         self.tileIndex = tileIndex
         self.imageWidth = image.get_width()
-        print(self.imageWidth * 0.2)
         self.imageHeight = image.get_height()
         self.baseImage = image
         self.thumbnail = pygame.transform.scale(self.baseImage, (width, height))
-        self.image = pygame.transform.scale(self.baseImage, (self.imageWidth * 0.2, self.imageHeight * 0.2))
+        self.image = pygame.transform.scale(self.baseImage, (self.imageWidth * 0.4, self.imageHeight * 0.4))
         self.paletteIndex = paletteIndex
+        self.imageFile = imageFile
 
     def DisplayTileButton(self, screen):
         screen.window.blit(self.thumbnail, (self.x, self.y))
@@ -26,7 +26,10 @@ class TileButton(Button):
         return self.tileIndex
 
     def GetImageWidth(self):
-        return self.imageWidth * 0.2
+        return self.imageWidth * 0.4
+
+    def GetImageFile(self):
+        return self.imageFile
 
     def OnClick(self, screen):
         pygame.draw.rect(screen.window, (0, 0, 0, 255), (self.x - 5, self.y - 5, self.width + 10, self.height + 10), 1)

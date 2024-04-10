@@ -4,6 +4,8 @@ import glob
 from textButton import *
 from TileButton import *
 from screen import *
+import json
+
 SCREEN_WIDTH: int = 1920
 SCREEN_HEIGHT: int = 1080
 BROWN: [int] = (163, 85, 49, 255)
@@ -18,6 +20,7 @@ class Palette:
         self.currentBg = baseBg
         self.placedTiles = []
         self.lockOnGrid = False
+        self.gameObjects = []
 
     def CreateLists(self, screen):
         i = 0
@@ -33,7 +36,7 @@ class Palette:
             for filename in glob.glob(folder + '*.png'):
 
                 image = pygame.image.load(filename)
-                self.objects[i].append(TileButton(tileX, tileY, self.tileSize, self.tileSize, i, j, image))
+                self.objects[i].append(TileButton(tileX, tileY, self.tileSize, self.tileSize, i, j, image, filename))
                 j += 1
                 tileX += self.tileSize * 2
                 if j % 4 == 0:
@@ -99,32 +102,43 @@ class Palette:
                            self.GetTileButtonFromCategory(currentPaletteIndex)[selectedTile + 1:]):
             tileButton.UnClick(screen)
 
-    def PlaceTile(self, selectedPalette, selectedTile, mousePos):
+    def PlaceTile(self, selectedPalette, selectedTile, mousePos, camera):
+        isSolid = False
         size = self.objects[selectedPalette][selectedTile].GetImageWidth()
         if self.lockOnGrid:
-            posX = (mousePos[0] // size) * size
-            posY = (mousePos[1] // size) * size
+            posX = ((mousePos[0] + camera.GetCameraX()) // size) * size
+            posY = (mousePos[1] // size) * size - 70
         else:
-            posX = mousePos[0]
+            posX = mousePos[0] + camera.GetCameraX()
             posY = mousePos[1]
 
         if selectedPalette == 0:
             self.currentBg = self.objects[selectedPalette][selectedTile].baseImage
         else:
-            self.placedTiles.append([self.objects[selectedPalette][selectedTile].image, (posX, posY)])
+            self.placedTiles.append([self.objects[selectedPalette][selectedTile].image,
+                                     (posX, posY)])
+            if selectedPalette == 3:
+                isSolid = True
 
-    def TilePreview(self, screen, selectedPalette, selectedTile, mousePos):
+            self.gameObjects.append([self.objects[selectedPalette][selectedTile].GetImageFile(),
+                                     posX, posY - 60, isSolid, 0.4])
+
+    def TilePreview(self, screen, selectedPalette, selectedTile, mousePos, camera):
         size = self.objects[selectedPalette][selectedTile].GetImageWidth()
         if self.lockOnGrid:
             posX = (mousePos[0] // size) * size
-            posY = (mousePos[1] // size) * size
+            posY = (mousePos[1] // size) * size - 60
         else:
             posX = mousePos[0]
             posY = mousePos[1]
 
-        if not selectedPalette == 0 and mousePos[0] < 1520:
+        if not selectedPalette == 0 and mousePos[0] < 1520 + camera.GetCameraX():
             screen.window.blit(self.objects[selectedPalette][selectedTile].image, (posX, posY))
 
     def UpdateCurrentBg(self, screen):
         screen.window.blit(self.currentBg, (0, 0))
+
+    def ExportLevel(self, levelName):
+        with open(levelName + '.json', 'w') as f:
+            json.dump(self.gameObjects, f)
 
