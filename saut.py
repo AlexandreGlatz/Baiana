@@ -107,7 +107,7 @@ while running:
             last_update = current_time
             current_frame = (current_frame + 1) % len(running_frames_scaled)
     else:
-        current_frame = 0
+        current_frame = 1
 
     # Player orientation management
     player_image = running_frames_scaled[current_frame]
