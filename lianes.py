@@ -16,9 +16,11 @@ pygame.display.set_caption('Jeu de Lianes')
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 clock = pygame.time.Clock()
+
+
 # Chargement de l'image du joueur
 class Player(pygame.sprite.Sprite):
-    def __init__(self,starting_angle=0):
+    def __init__(self, starting_angle=0):
         super().__init__()
         self.original_image = pygame.image.load('player.png')
         self.image = self.original_image.copy()
@@ -35,11 +37,12 @@ class Player(pygame.sprite.Sprite):
         self.length = 32  # Length of the vine
         self.angular_velocity = 5  # Angular velocity of swinging
         self.max_swing_angle = 45  # Maximum swing angle in degrees
+
     def update(self, dt):
-        
+
         # Si le joueur est accroché à une liane
         if self.grappling:
-            
+
             swing_angle = math.sin(self.angle) * self.max_swing_angle
             self.angle += self.angular_velocity * dt
             if self.angle >= math.pi * 2:
@@ -54,7 +57,8 @@ class Player(pygame.sprite.Sprite):
 
             # Update the rect position to keep the midbottom at the calculated position
             self.rect = self.image.get_rect(center=bottom_pos)
-            self.rect.midtop = (self.grappled_vine.rect.midbottom[0]-15,self.grappled_vine.rect.midbottom[1]-(self.rect.height/3)*2)
+            self.rect.midtop = (self.grappled_vine.rect.midbottom[0] - 15,
+                                self.grappled_vine.rect.midbottom[1] - (self.rect.height / 3) * 2)
         else:
             self.angle = 0
             self.image = self.original_image
@@ -93,7 +97,7 @@ class Player(pygame.sprite.Sprite):
         self.stop_grappling()  # Arrêter l'accrochage à la liane
 
     def stop_jump(self):
-        if self.jumping == False:
+        if not self.jumping:
             return
 
         self.jumping = False
@@ -101,7 +105,7 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 0  # Arrêter la gravité
 
     def try_graple_vine(self, vines):
-        if self.jumping == False:
+        if not self.jumping:
             return
 
         vines_collided = pygame.sprite.spritecollide(self, vines, False)
@@ -119,7 +123,8 @@ class Player(pygame.sprite.Sprite):
 
     def stop_grappling(self):
         if self.grappled_vine:
-            self.grappled_vine.rect.center = (self.grappled_vine.original_center_x, self.grappled_vine.original_center_y)
+            self.grappled_vine.rect.center = (self.grappled_vine.original_center_x,
+                                              self.grappled_vine.original_center_y)
             self.grappled_vine.angle = 0
             self.grappled_vine.image = self.grappled_vine.original_image
 
@@ -143,8 +148,9 @@ class Vine(pygame.sprite.Sprite):
         self.max_swing_angle = 45  # Maximum swing angle in degrees
         self.original_center_x = x
         self.original_center_y = y
+
     def update(self, player, dt):
-        
+
         if player.is_grapling() and self == player.grappled_vine:
             # Calculate swing angle based on sine function for a pendulum
             swing_angle = math.sin(self.angle) * self.max_swing_angle
@@ -164,22 +170,11 @@ class Vine(pygame.sprite.Sprite):
         else:
             self.angle = 0
             self.image = self.original_image
-            
-       
-         
-
-
-
-
-
-
-
-
-
 
 
 background_image = pygame.image.load('black.jpg')
-platform = pygame.Surface((150,20))
+platform = pygame.Surface((150, 20))
+
 
 def main():
     player = Player()
@@ -187,8 +182,6 @@ def main():
     vines = pygame.sprite.Group()
     vines.add(Vine(200, 300))
     vines.add(Vine(300, 300))  # Exemple de liane
-
-    
 
     dt = 0
     targetFPS = 60
@@ -204,7 +197,7 @@ def main():
                 pygame.quit()
                 sys.exit()
             elif event.type == KEYDOWN:
-                if player.is_grapling() == False:
+                if not player.is_grapling():
                     if event.key == K_LEFT:
                         player.velocity_x = -300
                     elif event.key == K_RIGHT:
@@ -239,8 +232,7 @@ def main():
             vine.rect.center = (vine.original_center_x, vine.original_center_y)
             vine.angle = 0
             vine.image = vine.original_image
-        
-   
+
         pygame.display.update()
 
         end = pygame.time.get_ticks()

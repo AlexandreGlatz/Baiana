@@ -1,7 +1,8 @@
 import pygame
 import sys
-import player
+import playermerge
 import gameobject
+import Vines
 """
 linked to player and gameobject
 
@@ -33,13 +34,14 @@ class Main(object):
         self.player = None
         self.background = None
         self.listobstable = []
+        self.listvines = []
         self.clock = pygame.time.Clock()
         self.fps = 60
         self.setup()
 
     def setup(self):
         self.screen = screen
-        self.player = player.Player(image_file, 100, 500, self.gravity, .25)
+        self.player = playermerge.Player(image_file, 100, 500, self.gravity, .25)
         self.loadmap()
         self.setup_background()
 
@@ -49,14 +51,9 @@ class Main(object):
                                                        self.screen.get_height() - 10, True, 1))
             self.listobstable.append(gameobject.object(image_file2, i * image_file2.get_rect().width,
                                                        -image_file2.get_rect().height + 10, True, 1))
-
-        self.listobstable.append(gameobject.object(image_file_water,
-                                                   self.screen.get_width() - image_file_water.get_rect().width,
-                                                   self.screen.get_height() - 10, True, 1))
-        self.listobstable.append(gameobject.shark(screensize[0] * .8, self.screen.get_height() - 50, 50, 200, 200,
-                                                  True, .2))
-        self.listobstable.append(gameobject.object(image_file3, 200, 200, True, 1))
-        self.listobstable.append(gameobject.object(image_file32, 500, 200, False, 1))
+        self.listvines.append(Vines.Vine(300, 600))
+        for vine in self.listvines:
+            self.listobstable.append(vine)
 
     def setup_background(self):
         self.background = pygame.Surface(self.screen.get_size())
@@ -96,7 +93,7 @@ class Main(object):
                 print("COLLISION ON")
 
             if not self.debug:
-                self.player.Movement(event)
+                self.player.Movement(event, self.listvines)
             else:
                 self.player.Movementdebug(event)
 
@@ -108,6 +105,8 @@ class Main(object):
                     i.dt = dt
             except AttributeError:
                 pass
+        for i in self.listvines:
+            i.dt = dt
 
     def main(self):
         dttraget = 1000 / self.fps
@@ -115,6 +114,8 @@ class Main(object):
             start = pygame.time.get_ticks()
             self.event_loop()
             self.player.Update(self.listobstable)
+            for vine in self.listvines:
+                vine.update(self.player)
             self.draw()
             end = pygame.time.get_ticks()
             dt = end - start

@@ -1,6 +1,6 @@
 import pygame
 import gameobject
-from math import sqrt
+from math import sqrt, pi, sin
 
 delta = {
     pygame.K_LEFT: (-2000, 0),
@@ -16,6 +16,7 @@ def clip(val, minval, maxval):
 
 class Player(gameobject.object):
     def __init__(self, image_file, startposX, startpoxY, gravity, resize):
+        self.original_image = image_file
         self.player = super().__init__(image_file, startposX, startpoxY, True, resize)
         self.speed = [0, 0]
         area = self.screen.get_rect()
@@ -23,6 +24,13 @@ class Player(gameobject.object):
         self.gravity = gravity  # world gravity
         self.Egravity = gravity  # current gravity
         self.jump = False
+
+        self.pivot = pygame.Vector2(self.rect.midtop)
+        self.grappling = False
+        self.grappled_vine = None
+        self.angle = 0
+        self.angular_velocity = 5
+        self.max_swing_angle = 45
 
     def Update(self, list):
         self.speed[1] += self.Egravity
@@ -35,7 +43,29 @@ class Player(gameobject.object):
         self.rect.bottom = clip(self.rect.bottom, 0, self.height)
         self.collision(list)
 
-    def Movement(self, event):
+        if self.grappling:
+
+            swing_angle = sin(self.angle) * self.max_swing_angle
+            self.angle += self.angular_velocity * self.dt
+            if self.angle >= pi * 2:
+                self.angle -= pi * 2
+
+            # Calculate the position of the midbottom of the vine based on swing angle
+            pivot_to_bottom = pygame.Vector2(0, 32).rotate(swing_angle)
+            bottom_pos = self.pivot + pivot_to_bottom
+
+            # Rotate the image around its center
+            self.image = pygame.transform.rotate(self.original_image, -swing_angle)
+
+            # Update the rect position to keep the midbottom at the calculated position
+            self.rect = self.image.get_rect(center=bottom_pos)
+            self.rect.midtop = (self.grappled_vine.rect.midbottom[0] - 15,
+                                self.grappled_vine.rect.midbottom[1] - (self.rect.height / 3) * 2)
+        else:
+            self.angle = 0
+            self.image = self.original_image
+
+    def Movement(self, event, vines):
         if event.type == pygame.KEYDOWN:
             deltax, deltay = delta.get(event.key, (0, 0))
             self.speed[0] += deltax * self.dt * self.resize
@@ -43,6 +73,8 @@ class Player(gameobject.object):
                 self.speed[1] = deltay * self.dt * self.resize
                 self.jump = False
                 self.Egravity = self.gravity
+            if event.key == pygame.K_UP:
+                self.try_graple_vine(vines)
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 self.speed[0] = 0
@@ -114,3 +146,28 @@ class Player(gameobject.object):
 
         else:
             self.Egravity = self.gravity
+
+    def try_graple_vine(self, vines):
+        vines_collided = pygame.sprite.spritecollide(self, vines, False)
+        if self.grappled_vine in vines_collided:
+            return
+
+        if len(vines_collided) == 0:
+            return
+
+        self.grappled_vine = vines_collided[0]
+        self.grappling = True
+        self.speed[0] = 0
+
+    def stop_grappling(self):
+        if self.grappled_vine:
+            self.grappled_vine.rect.center = (self.grappled_vine.original_center_x,
+                                              self.grappled_vine.original_center_y)
+            self.grappled_vine.angle = 0
+            self.grappled_vine.image = self.grappled_vine.original_image
+
+        self.grappled_vine = None
+        self.grappling = False
+
+    def is_grapling(self):
+        return self.grappling
