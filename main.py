@@ -57,14 +57,16 @@ class Main(object):
 
         # Initialization of backgrounds
         bg_far1 = Background.BackgroundElement(bg_far_image, (0, 0), 0.5, self.screen.get_size())
-        bg_far2 = Background.BackgroundElement(bg_far_image, (bg_far_image.get_width(), 0), 0.5, self.screen.get_size())
+        bg_far2 = Background.BackgroundElement(bg_far_image, (bg_far_image.get_width(), 0),
+                                               0.5, self.screen.get_size())
         bg_near1 = Background.BackgroundElement(bg_near_image, (0, 0), 1, self.screen.get_size())
-        bg_near2 = Background.BackgroundElement(bg_near_image, (bg_near_image.get_width(), 0), 1, self.screen.get_size())
+        bg_near2 = Background.BackgroundElement(bg_near_image, (bg_near_image.get_width(), 0),
+                                                1, self.screen.get_size())
 
         self.background = pygame.sprite.Group(bg_far1, bg_far2, bg_near1, bg_near2)
 
     def draw(self):
-        #self.screen.blit(self.background, (0, 0))
+        # self.screen.blit(self.background, (0, 0))
 
         self.screen.fill((0, 0, 0))
         direction = -1 if self.player.speed[0] > 0 else 1 if self.player.speed[0] < 0 else 0
