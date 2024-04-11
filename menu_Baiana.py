@@ -7,7 +7,7 @@ pygame.init()
 # Résolution par défaut
 screensize = pygame.display.set_mode().get_size()
 WIDTH = screensize[0]
-HEIGHT = screensize[1]
+HEIGHT = screensize[1] * 0.8
 
 
 class Background(pygame.sprite.Sprite):
