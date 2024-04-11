@@ -5,6 +5,7 @@ import playerani
 import gameobject
 import Camera
 import menu_Baiana
+import Background
 
 pygame.init()
 screensize = pygame.display.set_mode().get_size()  # WindowBorderless
@@ -23,9 +24,9 @@ class Main(object):
         self.clock = pygame.time.Clock()
         self.fps = 60
         try:
-            self.level = json.load(open("level"+str(level)+".json"))
+            self.level = json.load(open("level/level"+str(level)+".json"))
         except FileNotFoundError:
-            self.level = json.load(open("level1.json"))
+            self.level = json.load(open("level/level1.json"))
         self.camera = None
         self.setup()
 
@@ -40,15 +41,38 @@ class Main(object):
         for i in self.level:
             self.listobstable.append(gameobject.object(pygame.image.load(i[0]), i[1], i[2], i[3], i[4]))
 
-    def setup_background(self):
+    """def setup_background(self):
         self.background = pygame.Surface(self.screen.get_size())
         self.background = self.background.convert()
         self.background.fill((0, 0, 0))
         self.screen.blit(self.background, (0, 0))
-        pygame.display.flip()
+        pygame.display.flip()"""
+    def setup_background(self):
+        # parallax
+        bg_far_path = 'asset/background_3.png'
+        bg_near_path = 'asset/backg_2.png'
+
+        bg_far_image = pygame.image.load(bg_far_path).convert_alpha()
+        bg_near_image = pygame.image.load(bg_near_path).convert_alpha()
+
+        # Initialization of backgrounds
+        bg_far1 = Background.BackgroundElement(bg_far_image, (0, 0), 0.5, self.screen.get_size())
+        bg_far2 = Background.BackgroundElement(bg_far_image, (bg_far_image.get_width(), 0), 0.5, self.screen.get_size())
+        bg_near1 = Background.BackgroundElement(bg_near_image, (0, 0), 1, self.screen.get_size())
+        bg_near2 = Background.BackgroundElement(bg_near_image, (bg_near_image.get_width(), 0), 1, self.screen.get_size())
+
+        self.background = pygame.sprite.Group(bg_far1, bg_far2, bg_near1, bg_near2)
 
     def draw(self):
-        self.screen.blit(self.background, (0, 0))
+        #self.screen.blit(self.background, (0, 0))
+
+        self.screen.fill((0, 0, 0))
+        direction = -1 if self.player.speed[0] > 0 else 1 if self.player.speed[0] < 0 else 0
+        camera_speed = self.player.speed[0] * self.player.dt * direction
+        self.background.update(camera_speed)
+        for element in self.background:
+            screen.blit(element.image, element.rect)
+
         self.screen.blit(self.player.image, self.camera.apply(self.player.rect))
         for i in self.listobstable:
             self.screen.blit(i.image, self.camera.apply(i.rect))

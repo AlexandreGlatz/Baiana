@@ -78,6 +78,8 @@ class Player(gameobject.object):
                     self.image = pygame.transform.flip(self.image, True, False)
         elif self.jump and self.speed[0] == 0:  # not moving and not jumping
             self.image = self.idle
+            if self.facingL:
+                self.image = pygame.transform.flip(self.image, True, False)
         elif not self.jump and self.speed[0] != 0:  # jumping and moveing
             if current_time - self.last_update > fps:
                 self.last_update = current_time
