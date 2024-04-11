@@ -27,6 +27,17 @@ BLACK = (0, 0, 0)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Menu Pygame")
 
+# Charger les images
+title_img = pygame.image.load("asset/episode 1 baiana.png")
+chapitres_button_img = pygame.image.load("asset/_ chapitres.png")
+quitter_button_img = pygame.image.load("asset/_ retour au bureau.png")
+retour_button_img = pygame.image.load("asset/_ RETOUR.png")
+chapitre1_img = pygame.image.load("asset/_ CHapitre 1.png")
+chapitre2_img = pygame.image.load("asset/_ CHapitre 2.png")
+chapitre3_img = pygame.image.load("asset/_ CHapitre 3.png")
+chapitre4_img = pygame.image.load("asset/_ CHapitre 4.png")
+chapitre5_img = pygame.image.load("asset/_ CHapitre 5.png")
+
 # Font
 font = pygame.font.SysFont(None, 50)
 big_font = pygame.font.SysFont(None, 80)
@@ -47,7 +58,12 @@ def main_menu():
         screen.blit(BackGround.image, BackGround.rect)
 
         # Affichage du titre
-        draw_text("Baiana", big_font, BLACK, screen, WIDTH // 2, HEIGHT // 4)
+        screen.blit(title_img, ((WIDTH - title_img.get_width()) // 2, HEIGHT // 4))
+
+        # Affichage des images des boutons
+        screen.blit(chapitres_button_img, ((WIDTH - chapitres_button_img.get_width()) // 2, HEIGHT // 2))
+        screen.blit(quitter_button_img,
+                    ((WIDTH - quitter_button_img.get_width()) // 2, HEIGHT // 2 + 2 * (HEIGHT // 12)))
 
         # Calcul des positions des options en fonction de la taille de la fenêtre
         option_y = HEIGHT // 2
