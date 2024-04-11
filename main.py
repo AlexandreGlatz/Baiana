@@ -4,15 +4,15 @@ import sys
 import playerani
 import gameobject
 import Camera
+import menu_Baiana
 
 pygame.init()
 screensize = pygame.display.set_mode().get_size()  # WindowBorderless
 screen = pygame.display.set_mode(screensize, 0, 32)
-level1 = json.load(open("level1.json"))
 
 
 class Main(object):
-    def __init__(self):  # world
+    def __init__(self, level):  # world
         self.gravity = 1
         self.debug = False
         self.screen = None
@@ -21,7 +21,10 @@ class Main(object):
         self.listobstable = []
         self.clock = pygame.time.Clock()
         self.fps = 60
-        self.level = level1
+        try:
+            self.level = json.load(open("level"+str(level)+".json"))
+        except FileNotFoundError:
+            self.level = json.load(open("level1.json"))
         self.camera = None
         self.setup()
 
@@ -52,9 +55,11 @@ class Main(object):
 
     def event_loop(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                pass  # return to menu and reset
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and not self.debug:
                 self.player.gravity = 0
                 self.player.Egravity = 0
@@ -111,5 +116,8 @@ class Main(object):
 
 
 if __name__ == '__main__':
-    app = Main()
-    app.main()
+    while 1:
+        index = menu_Baiana.main_menu()
+        app = Main(index)
+        app.main()
+        del app
