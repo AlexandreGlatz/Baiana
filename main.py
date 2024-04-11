@@ -24,8 +24,10 @@ class Main(object):
         self.fps = 20
         try:
             self.level = json.load(open("level/level"+str(level)+".json"))
+            self.numb = level
         except FileNotFoundError:
             self.level = json.load(open("level/level1.json"))
+            self.numb = 1
         self.camera = None
         self.setup()
 
@@ -41,10 +43,25 @@ class Main(object):
             self.listobstable.append(gameobject.object(pygame.image.load(i[0]), i[1], i[2], i[3], i[4]))
 
     def setup_background(self):
-        self.background = pygame.Surface(self.screen.get_size())
+        """self.background = pygame.Surface(self.screen.get_size())
         self.background = self.background.convert()
         self.background.fill((0, 0, 0))
+        self.screen.blit(self.background, (0, 0))"""
+        match self.numb:
+            case 1:
+                self.background = pygame.image.load("assets/backgrounds/sea.png")
+            case 2:
+                self.background = pygame.image.load("assets/backgrounds/forêt.png")
+            case 3:
+                self.background = pygame.image.load(
+                    "assets/backgrounds/bleu-ciel-540-ceradel-sans-plomb-20-grammes.png")
+            case 4:
+                self.background = pygame.image.load("assets/backgrounds/demo-ld-assemblage3.png")
+            case _:
+                self.background = pygame.image.load(
+                    "assets/backgrounds/bleu-ciel-540-ceradel-sans-plomb-20-grammes.png")
         self.screen.blit(self.background, (0, 0))
+
         pygame.display.flip()
     """def setup_background(self):
         # parallax
