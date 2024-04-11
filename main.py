@@ -13,6 +13,7 @@ screen = pygame.display.set_mode(screensize, 0, 32)
 
 class Main(object):
     def __init__(self, level):  # world
+        self.end = False
         self.gravity = 1
         self.debug = False
         self.screen = None
@@ -59,7 +60,7 @@ class Main(object):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                pass  # return to menu and reset
+                self.end = True
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and not self.debug:
                 self.player.gravity = 0
                 self.player.Egravity = 0
@@ -101,7 +102,7 @@ class Main(object):
 
     def main(self):
         dttraget = 1000 / self.fps
-        while 1:
+        while not self.end:
             start = pygame.time.get_ticks()
             self.event_loop()
             self.Update()
@@ -120,4 +121,3 @@ if __name__ == '__main__':
         index = menu_Baiana.main_menu()
         app = Main(index)
         app.main()
-        del app
