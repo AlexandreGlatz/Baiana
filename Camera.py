@@ -12,8 +12,8 @@ class Camera:
         dy = self.target.rect.centery - self.rect.centery
         self.rect.x += int(dx * self.smooth_speed)
         self.rect.y += int(dy * self.smooth_speed)
-        if self.rect.y > 0:
-            self.rect.y = 0
+        if self.rect.y > 100:
+            self.rect.y = 100
 
     def apply(self, entity):
         if isinstance(entity, pygame.Rect):
