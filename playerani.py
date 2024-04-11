@@ -165,8 +165,8 @@ class Player(gameobject.object):
                             self.rect.top = list[i].rect.bottom
                             self.speed[1] = 0
 
-        else:
-            self.Egravity = self.gravity
+                else:
+                    self.Egravity = self.gravity
 
     def draw(self):
         self.rect.height = self.image.get_height()
