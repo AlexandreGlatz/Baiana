@@ -10,7 +10,7 @@ pygame.mixer.music.load('Gerudo Valley - The Legend of Zelda Ocarina Of Time.mp3
 pygame.mixer.music.play(-1)
 
 # Window settings
-wind_size = (800, 600)
+wind_size = (1920, 1080)
 screen = pygame.display.set_mode(wind_size)
 pygame.display.set_caption('Saut mdrr ça rebondit')
 
@@ -260,6 +260,8 @@ class Player(pygame.sprite.Sprite):
         self.current_time = 0
         self.running_frames = running_frames
         self.jumping_frames = jumping_frames
+        self.vx = 0
+        self.vy = 0
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
@@ -325,14 +327,48 @@ class Camera:
         self.rect.y += int(dy * self.smooth_speed)
 
     def apply(self, entity):
-        if isinstance(entity, pygame.Rect):
+        if isinstance(entity, pygame.sprite.Sprite):
+            return entity.rect.move(-self.rect.topleft[0], -self.rect.topleft[1])
+        elif isinstance(entity, pygame.Rect):
             return entity.move(-self.rect.topleft[0], -self.rect.topleft[1])
         else:
-            return entity.rect.move(-self.rect.topleft[0], -self.rect.topleft[1])
+            return entity.move(-self.rect.topleft[0], -self.rect.topleft[1])
 
 player = Player([400, 405], running_frames_scaled, jumping_frames_scaled)
 all_sprites.add(player)
 camera = Camera(player, wind_size[0], wind_size[1])
+
+class BackgroundElement(pygame.sprite.Sprite):
+    def __init__(self, image, pos, parallax_speed):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect(topleft=pos)
+        self.parallax_speed = parallax_speed
+        self.width = image.get_width()
+
+    def update(self, camera_speed):
+        self.rect.x += camera_speed * self.parallax_speed
+
+        if self.rect.left > wind_size[0]:
+            self.rect.right = 0
+
+        if self.rect.right < 0:
+            self.rect.left = wind_size[0]
+
+# parallax
+bg_far_path = 'background_3.png'
+bg_near_path = 'backg_2.png'
+
+bg_far_image = pygame.image.load(bg_far_path).convert_alpha()
+bg_near_image = pygame.image.load(bg_near_path).convert_alpha()
+
+# Initialization of backgrounds
+bg_far1 = BackgroundElement(bg_far_image, (0, 0), 0.5)
+bg_far2 = BackgroundElement(bg_far_image, (bg_far_image.get_width(), 0), 0.5)
+bg_near1 = BackgroundElement(bg_near_image, (0, 0), 1)
+bg_near2 = BackgroundElement(bg_near_image, (bg_near_image.get_width(), 0), 1)
+
+background_elements = pygame.sprite.Group(bg_far1, bg_far2, bg_near1, bg_near2)
 
 # Decor element (static)
 decor_element = pygame.Surface((100, 50))
@@ -345,14 +381,20 @@ clock = pygame.time.Clock()
 while running:
     dt = clock.tick(60) / 1000
 
+    direction = -1 if player.vx > 0 else 1 if player.vx < 0 else 0
+    camera_speed = player.speed * dt * direction
+    background_elements.update(camera_speed)
+
+    screen.fill(BLACK)
+    for element in background_elements:
+        screen.blit(element.image, element.rect)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
     all_sprites.update(dt)
     camera.update()
-
-    screen.fill(BLACK)
 
     decor_position = camera.apply(decor_rect)
     screen.blit(decor_element, decor_position)
