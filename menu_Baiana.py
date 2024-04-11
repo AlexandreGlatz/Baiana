@@ -5,7 +5,7 @@ import sys
 pygame.init()
 
 # Résolution par défaut
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1920, 1080
 
 # Récupération de la taille de l'écran
 screen_info = pygame.display.Info()
@@ -14,6 +14,15 @@ SCREEN_WIDTH, SCREEN_HEIGHT = screen_info.current_w, screen_info.current_h
 # Utilisation de la résolution de l'écran pour le plein écran
 FULLSCREEN_SIZE = (1920, 1080)
 
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
+
+
+BackGround = Background('menu principal.png', [0,0])
 # Couleurs
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -35,38 +44,31 @@ def draw_text(text, font, color, surface, x, y):
 
 # Fonction principale du menu
 def main_menu():
+    fullscreen = False
+    
     while True:
-        screen.fill(WHITE)
+        screen.fill([255, 255, 255])
+        screen.blit(BackGround.image, BackGround.rect)
+
         
         # Affichage du titre
         draw_text("Baiana", big_font, BLACK, screen, WIDTH // 2, HEIGHT // 4)
         
         # Calcul des positions des options en fonction de la taille de la fenêtre
-        option_y = HEIGHT // 3 + HEIGHT // 10
-        option_spacing = HEIGHT // 10
+        option_y = HEIGHT // 2
+        option_spacing = HEIGHT // 12
         option_width = WIDTH // 3
         option_height = HEIGHT // 15
         
-        # Affichage de l'option "Jouer"
-        jouer_rect = pygame.Rect((WIDTH - option_width) // 2, option_y, option_width, option_height)
-        pygame.draw.rect(screen, BLACK, jouer_rect)
-        draw_text("Jouer", font, WHITE, screen, (WIDTH - option_width) // 2 + option_width // 2, option_y + option_height // 2)
-        
-        # Espacement entre les options
-        option_y += option_spacing
-        
-        # Affichage de l'option "Chapitres"
+        # Affichage des options
         chapitres_rect = pygame.Rect((WIDTH - option_width) // 2, option_y, option_width, option_height)
         pygame.draw.rect(screen, BLACK, chapitres_rect)
         draw_text("Chapitres", font, WHITE, screen, (WIDTH - option_width) // 2 + option_width // 2, option_y + option_height // 2)
         
-        # Espacement entre les options
-        option_y += option_spacing
         
-        # Affichage de l'option "Quitter"
-        quitter_rect = pygame.Rect((WIDTH - option_width) // 2, option_y + option_spacing, option_width, option_height)
+        quitter_rect = pygame.Rect((WIDTH - option_width) // 2, option_y + 2 * option_spacing, option_width, option_height)
         pygame.draw.rect(screen, BLACK, quitter_rect)
-        draw_text("Quitter", font, WHITE, screen, (WIDTH - option_width) // 2 + option_width // 2, option_y + option_spacing + option_height // 2)
+        draw_text("Quitter", font, WHITE, screen, (WIDTH - option_width) // 2 + option_width // 2, option_y + 2 * option_spacing + option_height // 2)
         
         pygame.display.update()
         
@@ -76,9 +78,7 @@ def main_menu():
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if jouer_rect.collidepoint(mouse_pos):
-                    print("Lancement du jeu...")
-                elif chapitres_rect.collidepoint(mouse_pos):
+                if  chapitres_rect.collidepoint(mouse_pos):
                     chapitres_menu()  # Si l'utilisateur clique sur "Chapitres", afficher le sous-menu des chapitres
                 elif quitter_rect.collidepoint(mouse_pos):
                     pygame.quit()
@@ -87,16 +87,18 @@ def main_menu():
 # Sous-menu des chapitres
 def chapitres_menu():
     while True:
-        screen.fill(WHITE)
+        screen.fill([255, 255, 255])
+        screen.blit(BackGround.image, BackGround.rect)
+
         
         # Affichage du titre
-        draw_text("Chapitres", big_font, BLACK, screen, WIDTH // 2, HEIGHT // 7 + HEIGHT // 10)
+        draw_text("Chapitres", big_font, BLACK, screen, WIDTH // 2, HEIGHT // 3 + HEIGHT // 5)
         
         # Calcul des positions des options en fonction de la taille de la fenêtre
-        option_y = HEIGHT // 5 + HEIGHT // 5 + HEIGHT // 15
-        option_spacing = HEIGHT // 15
+        option_y = HEIGHT // 3 + HEIGHT // 5 + HEIGHT // 20
+        option_spacing = HEIGHT // 20
         option_width = WIDTH // 3
-        option_height = HEIGHT // 20
+        option_height = HEIGHT // 15
         
         # Affichage des chapitres
         for i in range(1, 6):
@@ -120,7 +122,7 @@ def chapitres_menu():
                 mouse_pos = pygame.mouse.get_pos()
                 # Ajoutez ici le code pour traiter la sélection du chapitre ou le retour en arrière
                 for i in range(1, 6):
-                    chapter_rect = pygame.Rect((WIDTH - option_width) // 2, HEIGHT // 3 + HEIGHT // 10 + HEIGHT // 20 + (i-1) * option_spacing, option_width, option_height)
+                    chapter_rect = pygame.Rect((WIDTH - option_width) // 2, HEIGHT // 3 + HEIGHT // 5 + HEIGHT // 20 + (i-1) * option_spacing, option_width, option_height)
                     if chapter_rect.collidepoint(mouse_pos):
                         print(f"Lancement du chapitre {i}...")
                         # Ajoutez ici le code pour démarrer le chapitre correspondant
