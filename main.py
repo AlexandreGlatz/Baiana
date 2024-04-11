@@ -48,19 +48,7 @@ class Main(object):
         self.setup_background()
 
     def loadmap(self):
-        for i in range((screensize[0] // image_file2.get_rect().width) + 1):
-            self.listobstable.append(gameobject.object(image_file2, i * image_file2.get_rect().width,
-                                                       self.screen.get_height() - 10, True, 1))
-            self.listobstable.append(gameobject.object(image_file2, i * image_file2.get_rect().width,
-                                                       -image_file2.get_rect().height + 10, True, 1))
-
-        self.listobstable.append(gameobject.object(image_file_water,
-                                                   self.screen.get_width() - image_file_water.get_rect().width,
-                                                   self.screen.get_height() - 10, True, 1))
-        self.listobstable.append(gameobject.shark(screensize[0] * .8, self.screen.get_height() - 50, 50, 200, 200,
-                                                  True, .2))
-        self.listobstable.append(gameobject.object(image_file3, 200, 200, True, 1))
-        self.listobstable.append(gameobject.object(image_file32, 500, 200, False, 1))
+        pass
 
     def setup_background(self):
         self.background = pygame.Surface(self.screen.get_size())
@@ -71,10 +59,8 @@ class Main(object):
 
     def draw(self):
         self.screen.blit(self.background, (0, 0))
-        # self.player.draw()
         self.screen.blit(self.player.image, self.camera.apply(self.player.rect))
         for i in self.listobstable:
-            # i.draw()
             self.screen.blit(i.image, self.camera.apply(i.rect))
         pygame.display.flip()
 
@@ -120,6 +106,7 @@ class Main(object):
         for i in self.listobstable:
             if i.__class__.__name__ == "shark":
                 i.move()
+        self.camera.update()
 
     def main(self):
         dttraget = 1000 / self.fps
@@ -127,7 +114,6 @@ class Main(object):
             start = pygame.time.get_ticks()
             self.event_loop()
             self.Update()
-            self.camera.update()
             self.draw()
             end = pygame.time.get_ticks()
             dt = end - start
@@ -141,3 +127,21 @@ class Main(object):
 if __name__ == '__main__':
     app = Main()
     app.main()
+
+
+class BackgroundElement(pygame.sprite.Sprite):
+    def __init__(self, image, pos, parallax_speed):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect(topleft=pos)
+        self.parallax_speed = parallax_speed
+        self.width = image.get_width()
+
+    def update(self, camera_speed):
+        self.rect.x += camera_speed * self.parallax_speed
+
+        if self.rect.left > screensize[0]:
+            self.rect.right = 0
+
+        if self.rect.right < 0:
+            self.rect.left = screensize[0]
