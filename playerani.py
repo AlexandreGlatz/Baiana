@@ -44,7 +44,7 @@ class Player(gameobject.object):
         frame_j_width = jump_sheet.get_width() / 6
         frame_j_height = jump_sheet.get_height()
         jumping_frames = [jump_sheet.subsurface(pygame.Rect(i * frame_j_width, 0, frame_j_width, frame_j_height)) for i
-                          in range(5)]
+                          in range(4)]
 
         scaled_frame_j_width = int(frame_j_width * resize)
         scaled_frame_j_height = int(frame_j_height * resize)
@@ -70,20 +70,21 @@ class Player(gameobject.object):
 
         current_time = pygame.time.get_ticks()
         if self.jump and self.speed[0] != 0:  # not jumping
-            if current_time - self.last_update > fps:
+            if current_time - self.last_update > fps * 2:
                 self.last_update = current_time
                 self.currentframeRun = (self.currentframeRun + 1) % len(self.running_frames_scaled)
                 self.image = self.running_frames_scaled[self.currentframeRun]
                 if self.facingL:
                     self.image = pygame.transform.flip(self.image, True, False)
-        elif self.jump and self.speed[0] == 0:  # not moving
+        elif self.jump and self.speed[0] == 0:  # not moving and not jumping
             self.image = self.idle
         elif not self.jump and self.speed[0] != 0:  # jumping and moveing
-            self.last_update = current_time
-            self.currentframeJump = (self.currentframeJump + 1) % len(self.jumping_frames_scaled)
-            self.image = self.jumping_frames_scaled[self.currentframeJump]
-            if self.facingL:
-                self.image = pygame.transform.flip(self.image, True, False)
+            if current_time - self.last_update > fps:
+                self.last_update = current_time
+                self.currentframeJump = (self.currentframeJump + 1) % len(self.jumping_frames_scaled)
+                self.image = self.jumping_frames_scaled[self.currentframeJump]
+                if self.facingL:
+                    self.image = pygame.transform.flip(self.image, True, False)
 
     def Movement(self, event):
         if event.type == pygame.KEYDOWN:
