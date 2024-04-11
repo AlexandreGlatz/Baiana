@@ -5,7 +5,6 @@ import playerani
 import gameobject
 import Camera
 import menu_Baiana
-import Background
 
 pygame.init()
 screensize = pygame.display.set_mode().get_size()  # WindowBorderless
@@ -22,7 +21,7 @@ class Main(object):
         self.background = None
         self.listobstable = []
         self.clock = pygame.time.Clock()
-        self.fps = 60
+        self.fps = 20
         try:
             self.level = json.load(open("level/level"+str(level)+".json"))
         except FileNotFoundError:
@@ -74,10 +73,9 @@ class Main(object):
         self.background.update(camera_speed)
         for element in self.background:
             screen.blit(element.image, element.rect)"""
-
-        self.screen.blit(self.player.image, self.camera.apply(self.player.rect))
         for i in self.listobstable:
             self.screen.blit(i.image, self.camera.apply(i.rect))
+        self.screen.blit(self.player.image, self.camera.apply(self.player.rect))
         pygame.display.flip()
 
     def event_loop(self):

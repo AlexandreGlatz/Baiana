@@ -93,7 +93,7 @@ class Player(gameobject.object):
             deltax, deltay = delta.get(event.key, (0, 0))
             self.speed[0] += deltax * self.dt * self.resize
             if self.jump:
-                self.speed[1] = deltay * self.dt * self.resize
+                self.speed[1] = deltay * self.dt * self.resize / 2.5
                 self.jump = False
                 self.Egravity = self.gravity
         elif event.type == pygame.KEYUP:
