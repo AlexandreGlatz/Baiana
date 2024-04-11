@@ -73,15 +73,9 @@ def main_menu():
 
         # Affichage des options
         chapitres_rect = pygame.Rect((WIDTH - option_width) // 2, option_y, option_width, option_height)
-        pygame.draw.rect(screen, BLACK, chapitres_rect)
-        draw_text("Chapitres", font, WHITE, screen, (WIDTH - option_width) // 2 + option_width // 2,
-                  option_y + option_height // 2)
 
         quitter_rect = pygame.Rect((WIDTH - option_width) // 2, option_y + 2 * option_spacing, option_width,
                                    option_height)
-        pygame.draw.rect(screen, BLACK, quitter_rect)
-        draw_text("Quitter", font, WHITE, screen, (WIDTH - option_width) // 2 + option_width // 2,
-                  option_y + 2 * option_spacing + option_height // 2)
 
         pygame.display.update()
 
@@ -107,27 +101,17 @@ def chapitres_menu():
         screen.blit(BackGround.image, BackGround.rect)
 
         # Affichage du titre
-        draw_text("Chapitres", big_font, BLACK, screen, WIDTH // 2, HEIGHT // 3 + HEIGHT // 5)
+        screen.blit(chapitres_button_img, ((WIDTH - chapitres_button_img.get_width()) // 2, HEIGHT // 3))
 
-        # Calcul des positions des options en fonction de la taille de la fenêtre
-        option_y = HEIGHT // 3 + HEIGHT // 5 + HEIGHT // 20
-        option_spacing = HEIGHT // 20
-        option_width = WIDTH // 3
-        option_height = HEIGHT // 15
+        # Affichage des images des chapitres
+        chapitres_images = [chapitre1_img, chapitre2_img, chapitre3_img, chapitre4_img, chapitre5_img]
+        y_position = HEIGHT // 3 + HEIGHT // 5 + HEIGHT // 20
+        for i, chapitre_img in enumerate(chapitres_images):
+            screen.blit(chapitre_img, ((WIDTH - chapitre_img.get_width()) // 2, y_position))
+            y_position += chapitre_img.get_height() + HEIGHT // 20
 
-        # Affichage des chapitres
-        for i in range(1, 6):
-            chapter_rect = pygame.Rect((WIDTH - option_width) // 2, option_y, option_width, option_height)
-            pygame.draw.rect(screen, BLACK, chapter_rect)
-            draw_text(f"Chapitre {i}", font, WHITE, screen, (WIDTH - option_width) // 2 + option_width // 2,
-                      option_y + option_height // 2)
-            option_y += option_spacing
-
-        # Affichage du bouton "Retour"
-        retour_rect = pygame.Rect((WIDTH - option_width) // 2, option_y + option_spacing, option_width, option_height)
-        pygame.draw.rect(screen, BLACK, retour_rect)
-        draw_text("Retour", font, WHITE, screen, (WIDTH - option_width) // 2 + option_width // 2,
-                  option_y + option_spacing + option_height // 2)
+        # Affichage de l'image du bouton "Retour"
+        screen.blit(retour_button_img, ((WIDTH - retour_button_img.get_width()) // 2, y_position + HEIGHT // 20))
 
         pygame.display.update()
 
@@ -138,15 +122,17 @@ def chapitres_menu():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 # Ajoutez ici le code pour traiter la sélection du chapitre ou le retour en arrière
-                for i in range(1, 6):
-                    chapter_rect = pygame.Rect((WIDTH - option_width) // 2,
-                                               HEIGHT // 3 + HEIGHT // 5 + HEIGHT // 20 + (i - 1) * option_spacing,
-                                               option_width, option_height)
-                    if chapter_rect.collidepoint(mouse_pos):
-                        print(f"Lancement du chapitre {i}...")
+                for i, chapitre_img in enumerate(chapitres_images):
+                    chapitre_rect = chapitre_img.get_rect(topleft=((WIDTH - chapitre_img.get_width()) // 2,
+                                                                   HEIGHT // 3 + HEIGHT // 5 + HEIGHT // 20 + i *
+                                                                   (chapitre_img.get_height() + HEIGHT // 20)))
+                    if chapitre_rect.collidepoint(mouse_pos):
+                        print(f"Lancement du chapitre {i + 1}...")
+                        return i + 1
                         # Ajoutez ici le code pour démarrer le chapitre correspondant
-                        return i
-                if retour_rect.collidepoint(mouse_pos):
+                if retour_button_img.get_rect(
+                        topleft=((WIDTH - retour_button_img.get_width()) // 2, y_position + HEIGHT // 20)).collidepoint(
+                        mouse_pos):
                     return  # Retour au menu principal
 
 
