@@ -12,7 +12,7 @@ screen = Screen(SCREEN_WIDTH, SCREEN_HEIGHT, "Level Editor")
 screen.CreateWindow()
 screen.SetBgColor(WHITE)
 
-palette = Palette(pygame.image.load("assets/backgrounds/bleu-ciel-540-ceradel-sans-plomb-20-grammes.png"))
+palette = Palette(pygame.image.load("assets/backgrounds/sea.png"))
 palette.CreateLists(screen)
 palette.DisplayPalette(screen, palette.GetObjectList()[0])
 palette.GetCategoryButtons()[0].SetColor(BROWN)
@@ -65,6 +65,9 @@ while True:
         if pygame.key.get_pressed()[pygame.K_d]:
             camera.CameraMove(10)
 
+        if pygame.key.get_pressed()[pygame.K_LCTRL]:
+            if pygame.key.get_pressed()[pygame.K_z]:
+                palette.Cancel()
         if mousePos[0] < 1520 + camera.GetCameraX() - palette.GetTileSize():
             if pygame.mouse.get_pressed()[0]:
                 palette.PlaceTile(selectedPalette, selectedTile, mousePos, camera)

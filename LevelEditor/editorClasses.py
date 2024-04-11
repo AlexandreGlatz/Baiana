@@ -13,7 +13,7 @@ BROWN: [int] = (163, 85, 49, 255)
 
 class Palette:
     def __init__(self, baseBg):
-        self.tileSize = 50
+        self.tileSize = 20
         self.tileScale = (self.tileSize, self.tileSize)
         self.objects = []
         self.paletteButtons: [] = []
@@ -114,6 +114,14 @@ class Palette:
 
         if selectedPalette == 0:
             self.currentBg = self.objects[selectedPalette][selectedTile].baseImage
+        elif selectedPalette == 3:
+            self.placedTiles.append([self.objects[selectedPalette][selectedTile].baseImage,
+                                     (posX, posY)])
+            if selectedPalette == 3:
+                isSolid = True
+
+            self.gameObjects.append([self.objects[selectedPalette][selectedTile].GetImageFile(),
+                                     posX, posY - 60, isSolid, 0.4])
         else:
             self.placedTiles.append([self.objects[selectedPalette][selectedTile].image,
                                      (posX, posY)])
@@ -132,7 +140,10 @@ class Palette:
             posX = mousePos[0]
             posY = mousePos[1]
 
-        if not selectedPalette == 0 and mousePos[0] < 1520 + camera.GetCameraX():
+        if selectedPalette == 3:
+            screen.window.blit(self.objects[selectedPalette][selectedTile].baseImage, (posX, posY))
+
+        elif not selectedPalette == 0 and mousePos[0] < 1520 + camera.GetCameraX():
             screen.window.blit(self.objects[selectedPalette][selectedTile].image, (posX, posY))
 
     def UpdateCurrentBg(self, screen):
@@ -142,3 +153,7 @@ class Palette:
         with open(levelName + '.json', 'w') as f:
             json.dump(self.gameObjects, f)
 
+    def Cancel(self):
+        if len(self.placedTiles) != 0:
+            self.placedTiles.pop()
+            self.gameObjects.pop()
