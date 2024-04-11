@@ -1,4 +1,6 @@
 import pygame
+
+
 class BackgroundElement(pygame.sprite.Sprite):
     def __init__(self, image, pos, parallax_speed, wind_size):
         super().__init__()
