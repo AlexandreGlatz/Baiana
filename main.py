@@ -1,30 +1,14 @@
+import json
 import pygame
 import sys
 import playerani
 import gameobject
 import Camera
 
-"""
-linked to player and gameobject
-
-escape to quit
-space to debug mode
-alt to enable/disable collision
-
-pour load map
-faire
-self.listobstable.append(gameobject.object(x, y, isSolid, resize)
-resize => pourcentage de resize par rapport a la taille de l'image d'origine
-"""
-image_file = pygame.image.load("asset/basic.png")
-image_file2 = pygame.image.load("asset/plat.png")
-image_file3 = pygame.image.load("asset/aaa2.png")
-image_file32 = pygame.image.load("asset/aaa.png")
-image_file4 = pygame.image.load("asset/mur.png")
-image_file_water = pygame.image.load("asset/water-export.png")
 pygame.init()
 screensize = pygame.display.set_mode().get_size()  # WindowBorderless
 screen = pygame.display.set_mode(screensize, 0, 32)
+level1 = json.load(open("level1.json"))
 
 
 class Main(object):
@@ -37,18 +21,20 @@ class Main(object):
         self.listobstable = []
         self.clock = pygame.time.Clock()
         self.fps = 60
+        self.level = level1
         self.camera = None
         self.setup()
 
     def setup(self):
         self.screen = screen
-        self.player = playerani.Player(image_file, 100, 500, self.gravity, .25)
+        self.player = playerani.Player(pygame.image.load("asset/basic.png"), 100, 500, self.gravity, .25)
         self.camera = Camera.Camera(self.player, self.screen.get_width(), self.screen.get_height())
         self.loadmap()
         self.setup_background()
 
     def loadmap(self):
-        pass
+        for i in self.level:
+            self.listobstable.append(gameobject.object(pygame.image.load(i[0]), i[1], i[2], i[3], i[4]))
 
     def setup_background(self):
         self.background = pygame.Surface(self.screen.get_size())
@@ -127,21 +113,3 @@ class Main(object):
 if __name__ == '__main__':
     app = Main()
     app.main()
-
-
-class BackgroundElement(pygame.sprite.Sprite):
-    def __init__(self, image, pos, parallax_speed):
-        super().__init__()
-        self.image = image
-        self.rect = self.image.get_rect(topleft=pos)
-        self.parallax_speed = parallax_speed
-        self.width = image.get_width()
-
-    def update(self, camera_speed):
-        self.rect.x += camera_speed * self.parallax_speed
-
-        if self.rect.left > screensize[0]:
-            self.rect.right = 0
-
-        if self.rect.right < 0:
-            self.rect.left = screensize[0]
