@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-# Initialisation dde Pygame
+# Initialisation de Pygame
 pygame.init()
 
 # Résolution par défaut
@@ -14,15 +14,16 @@ SCREEN_WIDTH, SCREEN_HEIGHT = screen_info.current_w, screen_info.current_h
 # Utilisation de la résolution de l'écran pour le plein écran
 FULLSCREEN_SIZE = (1920, 1080)
 
-
+# Classe pour l'arrière-plan
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
-        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
 
-BackGround = Background('menu principal.png', [0,0])
+# Initialisation de l'arrière-plan
+BackGround = Background('menu_principal.png', [0,0])
 
 # Couleurs
 WHITE = (255, 255, 255)
@@ -32,20 +33,22 @@ BLACK = (0, 0, 0)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Menu Pygame")
 
-# Charger les images 
-title_img = pygame.image.load("episode 1 baiana.png")
-chapitres_button_img = pygame.image.load("_ chapitres.png")
-quitter_button_img = pygame.image.load("_ retour au bureau.png")
-retour_button_img = pygame.image.load("_ RETOUR.png")
-chapitre1_img = pygame.image.load("_ CHapitre 1.png")
-chapitre2_img = pygame.image.load("_ CHapitre 2.png")
-chapitre3_img = pygame.image.load("_ CHapitre 3.png")
-chapitre4_img = pygame.image.load("_ CHapitre 4.png")
-chapitre5_img = pygame.image.load("_ CHapitre 5.png")
+# Charger les images des boutons
+title_img = pygame.image.load("episode_1_baiana.png")
+chapitres_button_img = pygame.image.load("_chapitres.png")
+quitter_button_img = pygame.image.load("_retour_au_bureau.png")
+retour_button_img = pygame.image.load("_retour.png")
+chapitre1_img = pygame.image.load("_chapitre_1.png")
+chapitre2_img = pygame.image.load("_chapitre_2.png")
+chapitre3_img = pygame.image.load("_chapitre_3.png")
+chapitre4_img = pygame.image.load("_chapitre_4.png")
+chapitre5_img = pygame.image.load("_chapitre_5.png")
+credits_button_img = pygame.image.load("_credits.png")
 
-# Redimensionner les images selon vos besoins
-#chapitres_button_img = pygame.transform.scale(chapitres_button_img, (width, height))
-# ...
+# Charger l'image pour les crédits déroulants
+credits_image = pygame.image.load("credit_baiana.png")
+# Adapter la taille de l'image à la fenêtre
+credits_image = pygame.transform.scale(credits_image, (WIDTH, HEIGHT))
 
 # Font
 font = pygame.font.SysFont(None, 50)
@@ -58,24 +61,22 @@ def draw_text(text, font, color, surface, x, y):
     text_rect.center = (x, y)
     surface.blit(text_obj, text_rect)
 
-# Fonction principale du menu
+# Menu principal
 def main_menu():
-    fullscreen = False
-    
     while True:
         screen.fill([255, 255, 255])
         screen.blit(BackGround.image, BackGround.rect)
 
-        
         # Affichage du titre
         screen.blit(title_img, ((WIDTH - title_img.get_width()) // 2, HEIGHT // 4))
-        
-        # Affichage des images des boutons
+
+        # Affichage des boutons
         screen.blit(chapitres_button_img, ((WIDTH - chapitres_button_img.get_width()) // 2, HEIGHT // 2))
         screen.blit(quitter_button_img, ((WIDTH - quitter_button_img.get_width()) // 2, HEIGHT // 2 + 2 * (HEIGHT // 12)))
-        
+        screen.blit(credits_button_img, ((WIDTH - credits_button_img.get_width()) // 2, HEIGHT // 2 + (HEIGHT // 12)))
+
         pygame.display.update()
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -83,47 +84,65 @@ def main_menu():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if chapitres_button_img.get_rect(topleft=((WIDTH - chapitres_button_img.get_width()) // 2, HEIGHT // 2)).collidepoint(mouse_pos):
-                    chapitres_menu()  # Si l'utilisateur clique sur "Chapitres", afficher le sous-menu des chapitres
+                    chapitres_menu()
                 elif quitter_button_img.get_rect(topleft=((WIDTH - quitter_button_img.get_width()) // 2, HEIGHT // 2 + 2 * (HEIGHT // 12))).collidepoint(mouse_pos):
                     pygame.quit()
                     sys.exit()
+                elif credits_button_img.get_rect(topleft=((WIDTH - credits_button_img.get_width()) // 2, HEIGHT // 2 + (HEIGHT // 12))).collidepoint(mouse_pos):
+                    credits_menu()
 
-# Sous-menu des chapitres
+# Menu des chapitres
 def chapitres_menu():
     while True:
         screen.fill([255, 255, 255])
         screen.blit(BackGround.image, BackGround.rect)
 
-        
-        # Affichage du titre
-        screen.blit(chapitres_button_img, ((WIDTH - chapitres_button_img.get_width()) // 2, HEIGHT // 3))
-        
-        # Affichage des images des chapitres
+        # Affichage des boutons des chapitres
         chapitres_images = [chapitre1_img, chapitre2_img, chapitre3_img, chapitre4_img, chapitre5_img]
         y_position = HEIGHT // 3 + HEIGHT // 5 + HEIGHT // 20
         for i, chapitre_img in enumerate(chapitres_images):
             screen.blit(chapitre_img, ((WIDTH - chapitre_img.get_width()) // 2, y_position))
             y_position += chapitre_img.get_height() + HEIGHT // 20
-        
-        # Affichage de l'image du bouton "Retour"
+
+        # Bouton retour
         screen.blit(retour_button_img, ((WIDTH - retour_button_img.get_width()) // 2, y_position + HEIGHT // 20))
-        
+
         pygame.display.update()
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                # Ajoutez ici le code pour traiter la sélection du chapitre ou le retour en arrière
                 for i, chapitre_img in enumerate(chapitres_images):
                     chapitre_rect = chapitre_img.get_rect(topleft=((WIDTH - chapitre_img.get_width()) // 2, HEIGHT // 3 + HEIGHT // 5 + HEIGHT // 20 + i * (chapitre_img.get_height() + HEIGHT // 20)))
                     if chapitre_rect.collidepoint(mouse_pos):
                         print(f"Lancement du chapitre {i + 1}...")
-                        # Ajoutez ici le code pour démarrer le chapitre correspondant
                 if retour_button_img.get_rect(topleft=((WIDTH - retour_button_img.get_width()) // 2, y_position + HEIGHT // 20)).collidepoint(mouse_pos):
-                    return  # Retour au menu principal
+                    return
+
+# Menu de crédit
+def credits_menu():
+    screen.fill([255, 255, 255])
+    screen.blit(BackGround.image, BackGround.rect)  # Arrière-plan pour les crédits
+
+    # Affichage de l'image déroulante
+    screen.blit(credits_image, (0, 0))
+
+    # Bouton retour
+    screen.blit(retour_button_img, ((WIDTH - retour_button_img.get_width()) // 2, HEIGHT - retour_button_img.get_height() - 20))
+    pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if retour_button_img.get_rect(topleft=((WIDTH - retour_button_img.get_width()) // 2, HEIGHT - retour_button_img.get_height() - 20)).collidepoint(mouse_pos):
+                    return
 
 # Lancement du menu principal
 main_menu()
