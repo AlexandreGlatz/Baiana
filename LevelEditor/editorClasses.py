@@ -39,7 +39,7 @@ class Palette:
                 self.objects[i].append(TileButton(tileX, tileY, self.tileSize, self.tileSize, i, j, image, filename))
                 j += 1
                 tileX += self.tileSize * 2
-                if j % 4 == 0:
+                if j % 9 == 0:
                     tileY += self.tileSize * 2
                     tileX = 1520 + 25
 
@@ -107,43 +107,33 @@ class Palette:
         size = self.objects[selectedPalette][selectedTile].GetImageWidth()
         if self.lockOnGrid:
             posX = ((mousePos[0] + camera.GetCameraX()) // size) * size
-            posY = (mousePos[1] // size) * size - 70
+            posY = (mousePos[1] // size) * size - 50
         else:
             posX = mousePos[0] + camera.GetCameraX()
             posY = mousePos[1]
 
         if selectedPalette == 0:
             self.currentBg = self.objects[selectedPalette][selectedTile].baseImage
-        elif selectedPalette == 3:
-            self.placedTiles.append([self.objects[selectedPalette][selectedTile].baseImage,
-                                     (posX, posY)])
-            if selectedPalette == 3:
-                isSolid = True
 
-            self.gameObjects.append([self.objects[selectedPalette][selectedTile].GetImageFile(),
-                                     posX, posY - 60, isSolid, 0.4])
-        else:
+        elif mousePos[0] < 1520 + camera.GetCameraX():
             self.placedTiles.append([self.objects[selectedPalette][selectedTile].image,
                                      (posX, posY)])
             if selectedPalette == 3:
                 isSolid = True
 
             self.gameObjects.append([self.objects[selectedPalette][selectedTile].GetImageFile(),
-                                     posX, posY - 60, isSolid, 0.4])
+                                     posX, posY - 50, isSolid, 0.4])
 
     def TilePreview(self, screen, selectedPalette, selectedTile, mousePos, camera):
         size = self.objects[selectedPalette][selectedTile].GetImageWidth()
         if self.lockOnGrid:
             posX = (mousePos[0] // size) * size
-            posY = (mousePos[1] // size) * size - 60
+            posY = (mousePos[1] // size) * size - 50
         else:
             posX = mousePos[0]
             posY = mousePos[1]
 
-        if selectedPalette == 3:
-            screen.window.blit(self.objects[selectedPalette][selectedTile].baseImage, (posX, posY))
-
-        elif not selectedPalette == 0 and mousePos[0] < 1520 + camera.GetCameraX():
+        if not selectedPalette == 0 and mousePos[0] < 1520 + camera.GetCameraX():
             screen.window.blit(self.objects[selectedPalette][selectedTile].image, (posX, posY))
 
     def UpdateCurrentBg(self, screen):

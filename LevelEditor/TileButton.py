@@ -7,12 +7,14 @@ class TileButton(Button):
 
     def __init__(self, x, y, width, height, paletteIndex, tileIndex, image, imageFile, color=(0, 0, 0, 0)):
         Button.__init__(self, color, x, y, width, height)
+        self.multiplier = 1
         self.tileIndex = tileIndex
         self.imageWidth = image.get_width()
         self.imageHeight = image.get_height()
         self.baseImage = image
         self.thumbnail = pygame.transform.scale(self.baseImage, (width, height))
-        self.image = pygame.transform.scale(self.baseImage, (self.imageWidth * 0.4, self.imageHeight * 0.4))
+        self.image = pygame.transform.scale(self.baseImage, (self.imageWidth * self.multiplier,
+                                                             self.imageHeight * self.multiplier))
         self.paletteIndex = paletteIndex
         self.imageFile = imageFile
 
@@ -26,7 +28,7 @@ class TileButton(Button):
         return self.tileIndex
 
     def GetImageWidth(self):
-        return self.imageWidth * 0.4
+        return self.imageWidth * self.multiplier
 
     def GetImageFile(self):
         return self.imageFile

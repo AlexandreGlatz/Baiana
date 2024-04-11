@@ -20,8 +20,8 @@ currentPaletteIndex = 0
 selectedPalette = 0
 selectedTile = -1
 camera = Camera()
-levelList = ImportLevel('level1')
-print(levelList)
+# levelList = ImportLevel('level1')
+# print(levelList)
 while True:
     mousePos = pygame.mouse.get_pos()
 
@@ -31,7 +31,7 @@ while True:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                palette.ExportLevel('level1')
+                palette.ExportLevel('level2')
                 pygame.quit()
 
             if event.key == pygame.K_LCTRL:
@@ -60,10 +60,10 @@ while True:
         palette.TilePreview(screen, selectedPalette, selectedTile, mousePos, camera)
 
         if pygame.key.get_pressed()[pygame.K_q]:
-            camera.CameraMove(-10)
+            camera.CameraMove(-100)
 
         if pygame.key.get_pressed()[pygame.K_d]:
-            camera.CameraMove(10)
+            camera.CameraMove(100)
 
         if pygame.key.get_pressed()[pygame.K_LCTRL]:
             if pygame.key.get_pressed()[pygame.K_z]:
