@@ -49,6 +49,9 @@ class Main(object):
         if self.numb == 1:
             self.listobstable.append(gameobject.shark(1000, 800, 100, 100, 150, True, .5))
             self.listobstable.append(gameobject.shark(2500, 850, 200, 500, 300, True, .25))
+            self.listobstable.append(gameobject.shark(4000, 800, 300, 700, 400, True, .5))
+            self.listobstable.append(gameobject.shark(7000, 850, 100, 200, 100, True, .25))
+            self.listobstable.append(gameobject.shark(10000, 800, 1500, 1000, 500, True, .5))
 
     def setup_background(self):
         """self.background = pygame.Surface(self.screen.get_size())
@@ -161,6 +164,7 @@ class Main(object):
             if dt < dttraget:
                 pygame.time.wait(int(dttraget - dt))
                 dt = dttraget
+            print(1000/dt)
             dt /= 1000
             self.givedt(dt)
 
