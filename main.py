@@ -21,7 +21,7 @@ class Main(object):
         self.background = None
         self.listobstable = []
         self.clock = pygame.time.Clock()
-        self.fps = 20
+        self.fps = 60
         try:
             self.level = json.load(open("level/level"+str(level)+".json"))
             self.numb = level
