@@ -55,7 +55,7 @@ class Player(gameobject.object):
         self.currentframeJump = 0
 
     def Update(self, list, fps):
-        self.speed[1] += self.Egravity
+        self.speed[1] += self.Egravity * self.dt * 25
         self.rect.move_ip(self.speed)
         # to not go outsize of the screen
         # usefull when no clipping

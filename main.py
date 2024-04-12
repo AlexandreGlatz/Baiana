@@ -101,7 +101,6 @@ class Main(object):
         for i in self.listobstable:
             self.screen.blit(i.image, self.camera.apply(i.rect))
         self.screen.blit(self.player.image, self.camera.apply(self.player.rect))
-        print(self.player.rect.x, self.player.rect.y)
         pygame.display.flip()
 
     def event_loop(self):
