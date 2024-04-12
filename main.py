@@ -33,7 +33,12 @@ class Main(object):
 
     def setup(self):
         self.screen = screen
-        self.player = playerani.Player(pygame.image.load("asset/basic.png"), 100, 500, self.gravity, .25)
+        match self.numb:
+            case 1:
+                self.player = playerani.Player(pygame.image.load("assets/entities/basic copie.png"), 100, 500,
+                                               self.gravity, .25, 1)
+            case _:
+                self.player = playerani.Player(pygame.image.load("asset/basic.png"), 100, 500, self.gravity, .25, 0)
         self.camera = Camera.Camera(self.player, self.screen.get_width(), self.screen.get_height())
         self.loadmap()
         self.setup_background()
@@ -41,6 +46,9 @@ class Main(object):
     def loadmap(self):
         for i in self.level:
             self.listobstable.append(gameobject.object(pygame.image.load(i[0]), i[1], i[2], i[3], i[4]))
+        if self.numb == 1:
+            self.listobstable.append(gameobject.shark(1000, 800, 100, 100, 150, True, .5))
+            self.listobstable.append(gameobject.shark(2500, 850, 200, 500, 300, True, .25))
 
     def setup_background(self):
         """self.background = pygame.Surface(self.screen.get_size())
@@ -93,6 +101,7 @@ class Main(object):
         for i in self.listobstable:
             self.screen.blit(i.image, self.camera.apply(i.rect))
         self.screen.blit(self.player.image, self.camera.apply(self.player.rect))
+        print(self.player.rect.x, self.player.rect.y)
         pygame.display.flip()
 
     def event_loop(self):

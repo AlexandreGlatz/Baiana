@@ -15,7 +15,7 @@ def clip(val, minval, maxval):
 
 
 class Player(gameobject.object):
-    def __init__(self, image_file, startposX, startpoxY, gravity, resize):
+    def __init__(self, image_file, startposX, startpoxY, gravity, resize, bateau):
         self.player = super().__init__(image_file, startposX, startpoxY, True, resize)
         self.speed = [0, 0]
         area = self.screen.get_rect()
@@ -23,6 +23,8 @@ class Player(gameobject.object):
         self.gravity = gravity  # world gravity
         self.Egravity = gravity  # current gravity
         self.jump = False
+        self.bateau = bateau
+        self.image2 = self.image
 
         # run
         sprite_sheet = pygame.image.load("asset/run_sheet.png").convert_alpha()
@@ -68,25 +70,32 @@ class Player(gameobject.object):
         elif self.speed[0] < 0:
             self.facingL = True
 
-        current_time = pygame.time.get_ticks()
-        if self.jump and self.speed[0] != 0:  # not jumping
-            if current_time - self.last_update > fps * 2:
-                self.last_update = current_time
-                self.currentframeRun = (self.currentframeRun + 1) % len(self.running_frames_scaled)
-                self.image = self.running_frames_scaled[self.currentframeRun]
+        if self.bateau == 0:
+            current_time = pygame.time.get_ticks()
+            if self.jump and self.speed[0] != 0:  # not jumping
+                if current_time - self.last_update > fps * 2:
+                    self.last_update = current_time
+                    self.currentframeRun = (self.currentframeRun + 1) % len(self.running_frames_scaled)
+                    self.image = self.running_frames_scaled[self.currentframeRun]
+                    if self.facingL:
+                        self.image = pygame.transform.flip(self.image, True, False)
+            elif self.jump and self.speed[0] == 0:  # not moving and not jumping
+                self.image = self.idle
                 if self.facingL:
                     self.image = pygame.transform.flip(self.image, True, False)
-        elif self.jump and self.speed[0] == 0:  # not moving and not jumping
-            self.image = self.idle
+            elif not self.jump and self.speed[0] != 0:  # jumping and moveing
+                if current_time - self.last_update > fps:
+                    self.last_update = current_time
+                    self.currentframeJump = (self.currentframeJump + 1) % len(self.jumping_frames_scaled)
+                    self.image = self.jumping_frames_scaled[self.currentframeJump]
+                    if self.facingL:
+                        self.image = pygame.transform.flip(self.image, True, False)
+        else:
             if self.facingL:
+                self.image = self.image2
                 self.image = pygame.transform.flip(self.image, True, False)
-        elif not self.jump and self.speed[0] != 0:  # jumping and moveing
-            if current_time - self.last_update > fps:
-                self.last_update = current_time
-                self.currentframeJump = (self.currentframeJump + 1) % len(self.jumping_frames_scaled)
-                self.image = self.jumping_frames_scaled[self.currentframeJump]
-                if self.facingL:
-                    self.image = pygame.transform.flip(self.image, True, False)
+            else:
+                self.image = self.image2
 
     def Movement(self, event):
         if event.type == pygame.KEYDOWN:
